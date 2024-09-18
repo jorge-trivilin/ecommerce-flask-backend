@@ -1,5 +1,3 @@
-Aqui está a formatação organizada do seu arquivo README, mantendo o texto original:
-
 ```markdown
 # ecommerce-flask-backend
 

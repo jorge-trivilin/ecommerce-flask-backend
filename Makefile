@@ -1,14 +1,35 @@
+# Makefile
+
+# Variables
+PYTHON = python3
+PIP = pip
+PYLINT = pylint
+AUTOPEP8 = autopep8
+PYTEST = pytest
+
+# Install dependencies
 install:
-	pip install --upgrade pip
-	pip install pytest==6.2.5
-	pip install pylint==2.10.2
-	pip install autopep8==1.5.7
+	$(PIP) install --upgrade pip
+	$(PIP) install pytest==6.2.5
+	$(PIP) install pylint==2.10.2
+	$(PIP) install autopep8==1.5.7
 
+# Run linting
 lint:
-	pylint
+	$(PYLINT) app tests
 
+# Run tests
 test:
-	pytest
+	$(PYTEST) --maxfail=1 --disable-warnings -q
 
+# Format code
 format:
-	autopep8 --in-place --aggressive --aggressive
+	$(AUTOPEP8) --in-place --aggressive --aggressive app tests
+
+# Clean generated files
+clean:
+	find . -type f -name '*.pyc' -delete
+	find . -type d -name '__pycache__' -delete
+
+# Default target
+.PHONY: install lint test format clean
