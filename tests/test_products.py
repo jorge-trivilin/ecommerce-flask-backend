@@ -129,7 +129,7 @@ def test_get_all_products(fixture_client, fixture_app, fixture_sample_product):
     assert data[0]["id"] == fixture_sample_product
 
 
-def test_get_single_product(fixture_client, fixture_app, fixture_sample_product):
+def test_get_single_product(fixture_client, fixture_sample_product):
     """
     Tests retrieving a single product by ID.
     """
