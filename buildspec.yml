@@ -9,8 +9,6 @@ phases:
   pre_build:
     commands:
       - echo "Starting pre-build phase..."
-      - echo "Installing dependencies..."
-      - pip install -r requirements.txt
       - echo "Fetching AWS account ID..."
       - export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
       - echo "AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID}"
@@ -19,10 +17,17 @@ phases:
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
       - echo "REPOSITORY_URI=$REPOSITORY_URI"
+      - echo "Installing project dependencies via Makefile..."
+      - make install
 
   build:
     commands:
-      - echo "Starting build phase..."
+      - echo "Running Linting..."
+      - make lint
+
+      - echo "Running Tests..."
+      - make test
+
       - echo "Building Docker image..."
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $REPOSITORY_URI:$IMAGE_TAG
