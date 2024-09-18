@@ -6,6 +6,7 @@ jobs:
   build:
     if: contains(github.event.head_commit.message, '-build')
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'staging' && 'staging' || 'production' && 'production' || 'development' }}
 
     steps:
     - uses: actions/checkout@v2
