@@ -42,7 +42,9 @@ phases:
 
 artifacts:
   files:
-    - imagedefinitions.json
+    - '**/*'
+  base-directory: /app
+  discard-paths: no
 
 cache:
   paths:
