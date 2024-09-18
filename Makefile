@@ -29,7 +29,10 @@ test:
 
 # Format code
 format:
-	$(AUTOPEP8) --in-place --aggressive --aggressive app tests
+    find app tests -name '*.py' -exec $(AUTOPEP8) --in-place --aggressive --aggressive {} +
+    git config --global user.email "jorge.trivilin@gmail.com"
+    git config --global user.name "Jorge Trivilin"
+    git diff --exit-code || (git add . && git commit -m "Auto-format code" && echo "Changes committed")
 
 # Clean generated files
 clean:
