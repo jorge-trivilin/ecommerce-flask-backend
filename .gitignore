@@ -4,3 +4,5 @@ __pycache__/
 
 # Ignore pytest cache directory
 .pytest_cache/
+
+app/__pycache__/
