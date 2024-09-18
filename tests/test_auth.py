@@ -40,8 +40,9 @@ from app.models import User
 from app.extensions import db
 from config import TestConfig
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 @pytest.fixture

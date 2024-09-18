@@ -30,8 +30,10 @@ from app import create_app
 from app.models import db
 from config import TestConfig
 
-# Configure logging for debugging purposes
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope="module")

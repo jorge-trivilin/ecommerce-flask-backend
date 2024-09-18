@@ -28,19 +28,20 @@ Dependencies:
 Usage:
 - Run with `pytest` to verify cart functionality.
 """
-
-
+# pylint: disable=unused-argument
+# pylint: disable=duplicate-code
+import logging
 import pytest
 from flask import json
 from app import create_app
 from app.extensions import db
-from app.models import User, Product # pylint: disable=unused-argument
+from app.models import User, Product
 from config import TestConfig
-import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
-
 
 @pytest.fixture
 def app():
@@ -56,20 +57,20 @@ def app():
     """
     app = create_app(TestConfig)
     with app.app_context():
-        logger.debug("Creating database tables")
+        logger.info("Creating database tables")
         db.create_all()
-        logger.debug("Database tables created")
+        logger.info("Database tables created")
 
         # Print all registered routes
         for rule in app.url_map.iter_rules():
             logger.debug(f"Registered route: {rule}")
 
         yield app
-        logger.debug("Removing database session")
+        logger.info("Removing database session")
         db.session.remove()
-        logger.debug("Dropping all tables")
+        logger.info("Dropping all tables")
         db.drop_all()
-        logger.debug("All tables dropped")
+        logger.info("All tables dropped")
 
 
 @pytest.fixture
@@ -104,12 +105,12 @@ def auth_headers(app, client):
         dict: Authorization headers with the Bearer token.
     """
     with app.app_context():
-        logger.debug("Creating test user")
+        logger.info("Creating test user")
         user = User(username="testuser", email="test@example.com")
         user.set_password("password")
         db.session.add(user)
         db.session.commit()
-        logger.debug("Test user created")
+        logger.info("Test user created")
 
     # Log in and get the token
     response = client.post(

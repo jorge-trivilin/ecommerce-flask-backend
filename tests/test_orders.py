@@ -24,9 +24,11 @@ Fixtures:
   an item to it.
 
 Test Cases:
-- `test_place_order_with_empty_cart`: Tests the behavior when attempting to place an order 
+- `test_place_order_with_empty_cart`: Tests the behavior when attempting 
+to place an order 
   with an empty cart.
-  - **Assertions**: Ensures the response status code is 400 and the message indicates the cart is empty.
+  - **Assertions**: Ensures the response status code is 400,
+  and the message indicates the cart is empty.
 
 - `test_place_order_success`: Verifies that an order can be placed successfully when 
   there are items in the cart.
@@ -61,16 +63,18 @@ Usage:
 - Run the tests using `pytest` to verify the correctness of order-related functionalities.
   Example command: `pytest test_orders.py`
 """
-
+# pylint: disable=duplicate-code
+import logging
 import pytest
 from flask import json
 from app import create_app
 from app.extensions import db
-from app.models import User, Cart, CartItem, Product, Order, OrderItem
+from app.models import User, Cart, CartItem, Product
 from config import TestConfig
-import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
@@ -208,7 +212,7 @@ def sample_cart(app, sample_user, sample_product):
         return cart
 
 
-def test_place_order_with_empty_cart(client, auth_headers, sample_user):
+def test_place_order_with_empty_cart(client, auth_headers, sample_user): # pylint: disable=unused-argument
     """
     Test placing an order with an empty cart.
 
@@ -225,7 +229,7 @@ def test_place_order_with_empty_cart(client, auth_headers, sample_user):
     assert json.loads(response.data)["msg"] == "Cart is empty"
 
 
-def test_place_order_success(client, auth_headers, sample_cart):
+def test_place_order_success(client, auth_headers, sample_cart): # pylint: disable=unused-argument
     """
     Test placing an order successfully with items in the cart.
 
@@ -249,7 +253,7 @@ def test_place_order_success(client, auth_headers, sample_cart):
     assert cart_data["cart"] == []
 
 
-def test_get_order_history(client, auth_headers, sample_cart):
+def test_get_order_history(client, auth_headers, sample_cart): # pylint: disable=unused-argument
     """
     Test retrieving the order history of a user.
 
@@ -273,7 +277,7 @@ def test_get_order_history(client, auth_headers, sample_cart):
     assert data["orders"][0]["items_count"] > 0
 
 
-def test_get_order_details(client, auth_headers, sample_cart):
+def test_get_order_details(client, auth_headers, sample_cart): # pylint: disable=unused-argument
     """
     Test retrieving the details of a specific order.
 
