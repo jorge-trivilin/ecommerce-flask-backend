@@ -115,10 +115,8 @@ def auth_headers(app, client):
 
     # Log in and get the token
     response = client.post(
-        "/auth/login",
-        json={
-            "username": "testuser",
-            "password": "password"})
+        "/auth/login", json={"username": "testuser", "password": "password"}
+    )
     data = json.loads(response.data)
     token = data.get("access_token")
 
@@ -218,12 +216,9 @@ def test_remove_from_cart(client, auth_headers, sample_product):
     )
 
     # Removing product from cart
-    response = client.delete(
-        f"/cart/{sample_product.id}",
-        headers=auth_headers)
+    response = client.delete(f"/cart/{sample_product.id}", headers=auth_headers)
     assert response.status_code == 200
-    assert json.loads(response.data)[
-        "msg"] == "Item successfully removed from cart"
+    assert json.loads(response.data)["msg"] == "Item successfully removed from cart"
 
     # Check if cart is empty
     response = client.get("/cart", headers=auth_headers)

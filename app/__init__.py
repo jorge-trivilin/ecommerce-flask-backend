@@ -15,8 +15,8 @@ Imports:
 """
 
 from flask import Flask
-from flask_migrate import Migrate # type: ignore
-from config import Config 
+from flask_migrate import Migrate  # type: ignore
+from config import Config
 from app.extensions import db, jwt
 from app.routes import routes_bp
 from app.routes.orders import orders_bp

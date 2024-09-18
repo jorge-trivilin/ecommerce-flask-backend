@@ -58,8 +58,7 @@ def register_error_handlers(app):
 
     @app.errorhandler(400)
     def bad_request(e):  # pylint: disable=unused-argument
-        return jsonify(
-            {"error": "Bad Request", "message": str(e.description)}), 400
+        return jsonify({"error": "Bad Request", "message": str(e.description)}), 400
 
     @app.errorhandler(404)
     def not_found(e):  # pylint: disable=unused-argument
@@ -80,7 +79,8 @@ def register_error_handlers(app):
                 {
                     "error": "Method Not Allowed",
                     "message": "The method is not allowed for the requested URL",
-                }),
+                }
+            ),
             405,
         )
 
