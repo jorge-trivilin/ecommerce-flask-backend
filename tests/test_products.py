@@ -5,7 +5,7 @@ This module contains unit tests for the product management functionality of
 the e-commerce backend. It tests various operations, including retrieving
 products, adding products, updating products, and deleting products.
 
-Each test is performed using a test client and an in-memory SQLite database.
+Each test is performed using a test client e um banco de dados SQLite em memória.
 """
 
 import pytest
@@ -17,9 +17,9 @@ from app.routes.products import products_bp
 
 
 @pytest.fixture(scope="function")
-def test_app():
+def fixture_app():
     """
-    Creates a Flask application configured for testing.
+    Creates a Flask application configured para testing.
     """
     app = Flask(__name__)
     app.config["TESTING"] = True
@@ -28,7 +28,7 @@ def test_app():
 
     # Initialize extensions
     db.init_app(app)
-    JWTManager(app)  # Initialize JWTManager
+    JWTManager(app)
     app.register_blueprint(products_bp)
 
     with app.app_context():
@@ -62,39 +62,39 @@ def test_app():
 
 
 @pytest.fixture
-def client(test_app):
+def fixture_client(fixture_app):
     """
     Provides a test client for the Flask application.
     """
-    return test_app.test_client()
+    return fixture_app.test_client()
 
 
 @pytest.fixture
-def admin_token(test_app):
+def fixture_admin_jwt_token(fixture_app):
     """
-    Generates a JWT token for the admin user.
+    Generates a JWT token para o usuário admin.
     """
-    with test_app.app_context():
+    with fixture_app.app_context():
         admin = User.query.filter_by(username="admin").first()
         return create_access_token(identity=admin.id)
 
 
 @pytest.fixture
-def user_token(test_app):
+def fixture_user_jwt_token(fixture_app):
     """
-    Generates a JWT token for the regular user.
+    Generates a JWT token para o usuário regular.
     """
-    with test_app.app_context():
+    with fixture_app.app_context():
         user = User.query.filter_by(username="user").first()
         return create_access_token(identity=user.id)
 
 
 @pytest.fixture
-def sample_product(test_app):
+def fixture_sample_product(fixture_app):
     """
     Creates a sample product in the database.
     """
-    with test_app.app_context():
+    with fixture_app.app_context():
         product = Product(
             name="Sample Product",
             description="This is a sample product.",
@@ -106,11 +106,11 @@ def sample_product(test_app):
         return product
 
 
-def test_get_all_products(client, sample_product):
+def test_get_all_products(fixture_client):
     """
     Tests retrieving all products.
     """
-    response = client.get("/products")
+    response = fixture_client.get("/products")
     assert response.status_code == 200
     data = response.get_json()
     assert isinstance(data, list)
@@ -118,11 +118,11 @@ def test_get_all_products(client, sample_product):
     assert data[0]["name"] == "Sample Product"
 
 
-def test_get_single_product(client, test_app, sample_product):
+def test_get_single_product(fixture_client, fixture_sample_product):
     """
     Tests retrieving a single product by ID.
     """
-    response = client.get(f"/products/{sample_product.id}")
+    response = fixture_client.get(f"/products/{fixture_sample_product.id}")
     assert response.status_code == 200
     data = response.get_json()
     assert data["name"] == "Sample Product"
@@ -131,17 +131,17 @@ def test_get_single_product(client, test_app, sample_product):
     assert data["stock"] == 100
 
 
-def test_get_nonexistent_product(client):
+def test_get_nonexistent_product(fixture_client):
     """
     Tests retrieving a product that doesn't exist.
     """
-    response = client.get("/products/999")
+    response = fixture_client.get("/products/999")
     assert response.status_code == 404
     data = response.get_json()
     assert data["msg"] == "Product not found"
 
 
-def test_add_product_as_admin(client, admin_token):
+def test_add_product_as_admin(fixture_client, fixture_admin_jwt_token):
     """
     Tests adding a new product as an admin.
     """
@@ -151,10 +151,10 @@ def test_add_product_as_admin(client, admin_token):
         "price": 29.99,
         "stock": 50,
     }
-    response = client.post(
+    response = fixture_client.post(
         "/products",
         json=new_product,
-        headers={"Authorization": f"Bearer {admin_token}"},
+        headers={"Authorization": f"Bearer {fixture_admin_jwt_token}"},
     )
     assert response.status_code == 201
     data = response.get_json()
@@ -162,13 +162,13 @@ def test_add_product_as_admin(client, admin_token):
     assert "product_id" in data
 
     # Verify that the product was added
-    with client.application.app_context():
+    with fixture_client.application.app_context():
         product = Product.query.get(data["product_id"])
         assert product is not None
         assert product.name == "New Product"
 
 
-def test_add_product_as_non_admin(client, user_token):
+def test_add_product_as_non_admin(fixture_client, fixture_user_jwt_token):
     """
     Tests adding a new product as a non-admin user.
     """
@@ -178,120 +178,131 @@ def test_add_product_as_non_admin(client, user_token):
         "price": 9.99,
         "stock": 10,
     }
-    response = client.post(
-        "/products", json=new_product, headers={"Authorization": f"Bearer {user_token}"}
+    response = fixture_client.post(
+        "/products",
+        json=new_product,
+        headers={"Authorization": f"Bearer {fixture_user_jwt_token}"},
     )
     assert response.status_code == 403
     data = response.get_json()
     assert data["msg"] == "Admin privilege required"
 
 
-def test_add_product_missing_fields(client, admin_token):
+def test_add_product_missing_fields(fixture_client, fixture_admin_jwt_token):
     """
     Tests adding a new product with missing required fields.
     """
     incomplete_product = {"description": "Missing name and price."}
-    response = client.post(
+    response = fixture_client.post(
         "/products",
         json=incomplete_product,
-        headers={"Authorization": f"Bearer {admin_token}"},
+        headers={"Authorization": f"Bearer {fixture_admin_jwt_token}"},
     )
     assert response.status_code == 400
     data = response.get_json()
     assert data["msg"] == "Name and price are required fields"
 
 
-def test_edit_product_as_admin(client, admin_token, sample_product):
+def test_edit_product_as_admin(
+    fixture_client, fixture_admin_jwt_token, fixture_sample_product
+):
     """
     Tests editing an existing product as an admin.
     """
     updated_data = {"name": "Updated Product", "price": 24.99, "stock": 80}
-    response = client.put(
-        f"/products/{sample_product.id}",
+    response = fixture_client.put(
+        f"/products/{fixture_sample_product.id}",
         json=updated_data,
-        headers={"Authorization": f"Bearer {admin_token}"},
+        headers={"Authorization": f"Bearer {fixture_admin_jwt_token}"},
     )
     assert response.status_code == 200
     data = response.get_json()
     assert data["msg"] == "Product updated"
-    assert data["product_id"] == sample_product.id
+    assert data["product_id"] == fixture_sample_product.id
 
     # Verify that the product was updated
-    with client.application.app_context():
-        product = Product.query.get(sample_product.id)
+    with fixture_client.application.app_context():
+        product = Product.query.get(fixture_sample_product.id)
         assert product.name == "Updated Product"
         assert product.price == 24.99
         assert product.stock == 80
 
 
-def test_edit_product_as_non_admin(client, user_token, sample_product):
+def test_edit_product_as_non_admin(
+    fixture_client, fixture_user_jwt_token, fixture_sample_product
+):
     """
     Tests editing a product as a non-admin user.
     """
     updated_data = {"name": "Hacked Product", "price": 0.99}
-    response = client.put(
-        f"/products/{sample_product.id}",
+    response = fixture_client.put(
+        f"/products/{fixture_sample_product.id}",
         json=updated_data,
-        headers={"Authorization": f"Bearer {user_token}"},
+        headers={"Authorization": f"Bearer {fixture_user_jwt_token}"},
     )
     assert response.status_code == 403
     data = response.get_json()
     assert data["msg"] == "Admin privilege required"
 
 
-def test_edit_product_no_data(client, admin_token, sample_product):
+def test_edit_product_no_data(
+    fixture_client, fixture_admin_jwt_token, fixture_sample_product
+):
     """
     Tests editing a product without providing any data.
     """
-    response = client.put(
-        f"/products/{sample_product.id}",
+    response = fixture_client.put(
+        f"/products/{fixture_sample_product.id}",
         json=None,
-        headers={"Authorization": f"Bearer {admin_token}"},
+        headers={"Authorization": f"Bearer {fixture_admin_jwt_token}"},
     )
     assert response.status_code == 400
     data = response.get_json()
     assert data["msg"] == "No data provided"
 
 
-def test_delete_product_as_admin(client, admin_token, sample_product):
+def test_delete_product_as_admin(
+    fixture_client, fixture_admin_jwt_token, fixture_sample_product
+):
     """
     Tests deleting a product as an admin.
     """
-    response = client.delete(
-        f"/products/{sample_product.id}",
-        headers={"Authorization": f"Bearer {admin_token}"},
+    response = fixture_client.delete(
+        f"/products/{fixture_sample_product.id}",
+        headers={"Authorization": f"Bearer {fixture_admin_jwt_token}"},
     )
     assert response.status_code == 200
     data = response.get_json()
     assert data["msg"] == "Product deleted"
 
     # Verify that the product was deleted
-    with client.application.app_context():
-        product = Product.query.get(sample_product.id)
+    with fixture_client.application.app_context():
+        product = Product.query.get(fixture_sample_product.id)
         assert product is None
 
 
-def test_delete_product_as_non_admin(client, user_token, sample_product):
+def test_delete_product_as_non_admin(
+    fixture_client, fixture_user_jwt_token, fixture_sample_product
+):
     """
     Tests deleting a product as a non-admin user.
     """
-    response = client.delete(
-        f"/products/{sample_product.id}",
-        headers={"Authorization": f"Bearer {user_token}"},
+    response = fixture_client.delete(
+        f"/products/{fixture_sample_product.id}",
+        headers={"Authorization": f"Bearer {fixture_user_jwt_token}"},
     )
     assert response.status_code == 403
     data = response.get_json()
     assert data["msg"] == "Admin privilege required"
 
 
-def test_delete_nonexistent_product(client, admin_token):
+def test_delete_nonexistent_product(fixture_client, fixture_admin_jwt_token):
     """
     Tests deleting a product that doesn't exist.
     """
-    response = client.delete(
-        "/products/999", headers={"Authorization": f"Bearer {admin_token}"}
+    response = fixture_client.delete(
+        "/products/999", headers={"Authorization": f"Bearer {fixture_admin_jwt_token}"}
     )
     assert response.status_code == 404
     data = response.get_json()
     assert data["msg"] == "Product not found"
-

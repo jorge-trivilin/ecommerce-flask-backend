@@ -46,7 +46,7 @@ db: SQLAlchemy = SQLAlchemy()
 class User(db.Model):  # type: ignore
     """
     Represents a registered user in the system.
-    
+
     Attributes:
         id: The unique identifier for the user.
         username: The username of the user.
@@ -71,7 +71,7 @@ class User(db.Model):  # type: ignore
     def set_password(self, password: str) -> None:
         """
         Sets the hashed password for the user.
-        
+
         Args:
             password: The plain-text password to hash.
         """
@@ -80,10 +80,10 @@ class User(db.Model):  # type: ignore
     def check_password(self, password: str) -> bool:
         """
         Checks if the provided password matches the hashed password.
-        
+
         Args:
             password: The plain-text password to check.
-        
+
         Returns:
             True if the password is correct, False otherwise.
         """
@@ -93,7 +93,7 @@ class User(db.Model):  # type: ignore
 class Product(db.Model):  # type: ignore
     """
     Represents a product available for purchase.
-    
+
     Attributes:
         id: The unique identifier for the product.
         name: The name of the product.
@@ -113,7 +113,7 @@ class Product(db.Model):  # type: ignore
 class Cart(db.Model):  # type: ignore
     """
     Represents a user's shopping cart.
-    
+
     Attributes:
         id: The unique identifier for the cart.
         user_id: The identifier of the user who owns the cart.
@@ -131,7 +131,7 @@ class Cart(db.Model):  # type: ignore
 class CartItem(db.Model):  # type: ignore
     """
     Represents an item in a shopping cart.
-    
+
     Attributes:
         id: The unique identifier for the cart item.
         cart_id: The identifier of the cart to which the item belongs.
@@ -153,7 +153,7 @@ class CartItem(db.Model):  # type: ignore
 class Order(db.Model):  # type: ignore
     """
     Represents a completed order.
-    
+
     Attributes:
         id: The unique identifier for the order.
         user_id: The identifier of the user who placed the order.
@@ -175,7 +175,7 @@ class Order(db.Model):  # type: ignore
 class OrderItem(db.Model):  # type: ignore
     """
     Represents an item in a completed order.
-    
+
     Attributes:
         id: The unique identifier for the order item.
         order_id: The identifier of the order to which the item belongs.

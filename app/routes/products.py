@@ -71,6 +71,7 @@ def admin_required(fn):
     Raises:
         HTTPException: 403 Forbidden if the user is not an admin.
     """
+
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
@@ -183,7 +184,10 @@ def add_product():
         db.session.rollback()
         return (
             jsonify(
-                {"msg": "An error occurred while adding the product", "error": str(error)}
+                {
+                    "msg": "An error occurred while adding the product",
+                    "error": str(error),
+                }
             ),
             500,
         )
@@ -228,7 +232,10 @@ def edit_product(product_id):
         db.session.rollback()
         return (
             jsonify(
-                {"msg": "An error occurred while updating the product", "error": str(error)}
+                {
+                    "msg": "An error occurred while updating the product",
+                    "error": str(error),
+                }
             ),
             500,
         )
@@ -264,7 +271,10 @@ def delete_product(product_id):
         db.session.rollback()
         return (
             jsonify(
-                {"msg": "An error occurred while deleting the product", "error": str(error)}
+                {
+                    "msg": "An error occurred while deleting the product",
+                    "error": str(error),
+                }
             ),
             500,
         )

@@ -32,18 +32,3 @@ def test_client():
         yield client
         with app.app_context():
             db.drop_all()
-
-
-@pytest.fixture(scope="module")
-def init_db(test_client):
-    """
-    Fixture for initializing the database.
-
-    This fixture is currently a placeholder and does not perform any
-    operations. It can be extended to include database setup or teardown
-    if needed for specific tests.
-
-    Args:
-        test_client (FlaskClient): The test client fixture.
-    """
-    pass

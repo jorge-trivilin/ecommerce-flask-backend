@@ -21,6 +21,7 @@ from app.routes import routes_bp
 db = SQLAlchemy()
 jwt = JWTManager()
 
+
 def create_app(config_class="config.Config"):
     """
     Creates and configures an instance of the Flask application.
