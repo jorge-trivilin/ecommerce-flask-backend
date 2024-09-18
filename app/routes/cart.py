@@ -56,13 +56,17 @@ def add_to_cart():
         db.session.add(cart)
         db.session.commit()
     product = Product.query.get_or_404(data["product_id"])
-    cart_item = CartItem.query.filter_by(cart_id=cart.id, product_id=product.id).first()
+    cart_item = CartItem.query.filter_by(
+        cart_id=cart.id, product_id=product.id).first()
     if cart_item:
         cart_item.quantity += data.get("quantity", 1)
     else:
         cart_item = CartItem(
-            cart_id=cart.id, product_id=product.id, quantity=data.get("quantity", 1)
-        )
+            cart_id=cart.id,
+            product_id=product.id,
+            quantity=data.get(
+                "quantity",
+                1))
         db.session.add(cart_item)
     db.session.commit()
     return jsonify({"msg": "Product added to cart"}), 200

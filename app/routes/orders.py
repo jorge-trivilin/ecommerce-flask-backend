@@ -47,4 +47,5 @@ def place_order():
     Cart.query.filter_by(cart_id=cart.id).delete()
     db.session.commit()
 
-    return jsonify({"msg": "Order placed successfully", "order_id": order.id}), 201
+    return jsonify({"msg": "Order placed successfully",
+                   "order_id": order.id}), 201

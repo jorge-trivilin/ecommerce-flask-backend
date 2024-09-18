@@ -312,8 +312,9 @@ def test_delete_nonexistent_product(fixture_client, fixture_admin_jwt_token):
     Tests deleting a product that doesn't exist.
     """
     response = fixture_client.delete(
-        "/products/999", headers={"Authorization": f"Bearer {fixture_admin_jwt_token}"}
-    )
+        "/products/999",
+        headers={
+            "Authorization": f"Bearer {fixture_admin_jwt_token}"})
     assert response.status_code == 404
     data = response.get_json()
     assert data["msg"] == "Product not found"
