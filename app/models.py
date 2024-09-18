@@ -41,16 +41,19 @@ from sqlalchemy import String, Boolean, Text, Float, ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
 from typing import List, Optional
 
-db: SQLAlchemy = SQLAlchemy() 
+db: SQLAlchemy = SQLAlchemy()
 
-class User(db.Model): # type: ignore
-    __tablename__ = 'user'
+
+class User(db.Model):  # type: ignore
+    __tablename__ = "user"
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(128), nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
-    cart: Mapped[Optional["Cart"]] = relationship("Cart", back_populates="user", uselist=False)
+    cart: Mapped[Optional["Cart"]] = relationship(
+        "Cart", back_populates="user", uselist=False
+    )
     orders: Mapped[List["Order"]] = relationship("Order", back_populates="user")
 
     def set_password(self, password: str) -> None:
@@ -60,8 +63,8 @@ class User(db.Model): # type: ignore
         return check_password_hash(self.password_hash, password)
 
 
-class Product(db.Model): # type: ignore
-    __tablename__ = 'product'
+class Product(db.Model):  # type: ignore
+    __tablename__ = "product"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=True)
@@ -69,16 +72,16 @@ class Product(db.Model): # type: ignore
     stock: Mapped[int] = mapped_column(default=0)
 
 
-class Cart(db.Model): # type: ignore
-    __tablename__ = 'cart'
+class Cart(db.Model):  # type: ignore
+    __tablename__ = "cart"
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     user: Mapped["User"] = relationship("User", back_populates="cart")
     items: Mapped[List["CartItem"]] = relationship("CartItem", back_populates="cart")
 
 
-class CartItem(db.Model): # type: ignore
-    __tablename__ = 'cart_item'
+class CartItem(db.Model):  # type: ignore
+    __tablename__ = "cart_item"
     id: Mapped[int] = mapped_column(primary_key=True)
     cart_id: Mapped[int] = mapped_column(ForeignKey("cart.id"), nullable=False)
     product_id: Mapped[int] = mapped_column(ForeignKey("product.id"), nullable=False)
@@ -87,16 +90,19 @@ class CartItem(db.Model): # type: ignore
     product: Mapped["Product"] = relationship("Product")
 
 
-class Order(db.Model): # type: ignore
-    __tablename__ = 'order'
+class Order(db.Model):  # type: ignore
+    __tablename__ = "order"
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     total: Mapped[float] = mapped_column(Float, nullable=False)
     user: Mapped["User"] = relationship("User", back_populates="orders")
-    order_items: Mapped[List["OrderItem"]] = relationship("OrderItem", back_populates="order")
+    order_items: Mapped[List["OrderItem"]] = relationship(
+        "OrderItem", back_populates="order"
+    )
 
-class OrderItem(db.Model): # type: ignore
-    __tablename__ = 'order_item'
+
+class OrderItem(db.Model):  # type: ignore
+    __tablename__ = "order_item"
     id: Mapped[int] = mapped_column(primary_key=True)
     order_id: Mapped[int] = mapped_column(ForeignKey("order.id"), nullable=False)
     product_id: Mapped[int] = mapped_column(ForeignKey("product.id"), nullable=False)
