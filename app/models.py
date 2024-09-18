@@ -1,5 +1,3 @@
-# models.py
-
 """
 models.py: Database Models for E-commerce Backend
 
@@ -35,16 +33,30 @@ Note:
     Ensure that you initialize and configure SQLAlchemy with your Flask application before
     using these models.
 """
+
+from typing import List, Optional
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, relationship, mapped_column
 from sqlalchemy import String, Boolean, Text, Float, ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
-from typing import List, Optional
 
 db: SQLAlchemy = SQLAlchemy()
 
 
 class User(db.Model):  # type: ignore
+    """
+    Represents a registered user in the system.
+    
+    Attributes:
+        id: The unique identifier for the user.
+        username: The username of the user.
+        email: The email address of the user.
+        password_hash: The hashed password of the user.
+        is_admin: A boolean indicating if the user is an admin.
+        cart: The user's shopping cart (one-to-one relationship).
+        orders: The orders placed by the user (one-to-many relationship).
+    """
+
     __tablename__ = "user"
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
@@ -57,13 +69,39 @@ class User(db.Model):  # type: ignore
     orders: Mapped[List["Order"]] = relationship("Order", back_populates="user")
 
     def set_password(self, password: str) -> None:
+        """
+        Sets the hashed password for the user.
+        
+        Args:
+            password: The plain-text password to hash.
+        """
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password: str) -> bool:
+        """
+        Checks if the provided password matches the hashed password.
+        
+        Args:
+            password: The plain-text password to check.
+        
+        Returns:
+            True if the password is correct, False otherwise.
+        """
         return check_password_hash(self.password_hash, password)
 
 
 class Product(db.Model):  # type: ignore
+    """
+    Represents a product available for purchase.
+    
+    Attributes:
+        id: The unique identifier for the product.
+        name: The name of the product.
+        description: A description of the product.
+        price: The price of the product.
+        stock: The quantity of the product in stock.
+    """
+
     __tablename__ = "product"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -73,6 +111,16 @@ class Product(db.Model):  # type: ignore
 
 
 class Cart(db.Model):  # type: ignore
+    """
+    Represents a user's shopping cart.
+    
+    Attributes:
+        id: The unique identifier for the cart.
+        user_id: The identifier of the user who owns the cart.
+        user: The user associated with the cart (one-to-one relationship).
+        items: The items in the cart (one-to-many relationship).
+    """
+
     __tablename__ = "cart"
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
@@ -81,6 +129,18 @@ class Cart(db.Model):  # type: ignore
 
 
 class CartItem(db.Model):  # type: ignore
+    """
+    Represents an item in a shopping cart.
+    
+    Attributes:
+        id: The unique identifier for the cart item.
+        cart_id: The identifier of the cart to which the item belongs.
+        product_id: The identifier of the product.
+        quantity: The quantity of the product in the cart.
+        cart: The cart associated with the item (one-to-one relationship).
+        product: The product associated with the item (one-to-one relationship).
+    """
+
     __tablename__ = "cart_item"
     id: Mapped[int] = mapped_column(primary_key=True)
     cart_id: Mapped[int] = mapped_column(ForeignKey("cart.id"), nullable=False)
@@ -91,6 +151,17 @@ class CartItem(db.Model):  # type: ignore
 
 
 class Order(db.Model):  # type: ignore
+    """
+    Represents a completed order.
+    
+    Attributes:
+        id: The unique identifier for the order.
+        user_id: The identifier of the user who placed the order.
+        total: The total amount of the order.
+        user: The user who placed the order (one-to-one relationship).
+        order_items: The items in the order (one-to-many relationship).
+    """
+
     __tablename__ = "order"
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
@@ -102,6 +173,19 @@ class Order(db.Model):  # type: ignore
 
 
 class OrderItem(db.Model):  # type: ignore
+    """
+    Represents an item in a completed order.
+    
+    Attributes:
+        id: The unique identifier for the order item.
+        order_id: The identifier of the order to which the item belongs.
+        product_id: The identifier of the product.
+        quantity: The quantity of the product in the order.
+        price: The price of the product at the time of the order.
+        order: The order associated with the item (one-to-one relationship).
+        product: The product associated with the item (one-to-one relationship).
+    """
+
     __tablename__ = "order_item"
     id: Mapped[int] = mapped_column(primary_key=True)
     order_id: Mapped[int] = mapped_column(ForeignKey("order.id"), nullable=False)

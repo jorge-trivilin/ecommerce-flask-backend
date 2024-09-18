@@ -1,15 +1,31 @@
-# tests/__init__.py
+"""
+Unit tests for the application.
 
-import pytest
+This module contains fixtures and configurations for setting up the testing environment,
+including database setup and client configuration for testing purposes.
+"""
+
 import logging
+import pytest
 from app import create_app
 from app.models import db
 
+# Configure logging for debugging purposes
 logging.basicConfig(level=logging.DEBUG)
 
-@pytest.fixture(scope='module')
+
+@pytest.fixture(scope="module")
 def test_client():
-    app = create_app('config.TestingConfig')
+    """
+    Fixture for creating a test client for the application.
+
+    Sets up the application and creates a test client for making requests.
+    Also sets up and tears down the database schema for testing.
+
+    Returns:
+        FlaskClient: The test client instance.
+    """
+    app = create_app("config.TestingConfig")
     with app.test_client() as client:
         with app.app_context():
             db.create_all()
@@ -17,6 +33,17 @@ def test_client():
         with app.app_context():
             db.drop_all()
 
-@pytest.fixture(scope='module')
+
+@pytest.fixture(scope="module")
 def init_db(test_client):
+    """
+    Fixture for initializing the database.
+
+    This fixture is currently a placeholder and does not perform any
+    operations. It can be extended to include database setup or teardown
+    if needed for specific tests.
+
+    Args:
+        test_client (FlaskClient): The test client fixture.
+    """
     pass
