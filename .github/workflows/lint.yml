@@ -7,7 +7,7 @@ on:
 jobs:
   run-linter-with-Black-and-Ruff:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'staging' && 'staging' || 'production' && 'production' || 'development' }}
+    environment: ${{ github.ref_name == 'staging' && 'staging' || github.ref_name == 'production' && 'production' || 'development' }}
 
     steps:
       - name: Checkout code
