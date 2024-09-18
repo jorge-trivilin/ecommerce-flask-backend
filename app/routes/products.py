@@ -47,10 +47,10 @@ Dependencies:
 
 """
 
-from flask import Blueprint, request, jsonify
-from app.models import db, Product, User
-from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 from functools import wraps
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
+from app.models import db, Product, User
 
 products_bp = Blueprint("products", __name__)
 
