@@ -1,0 +1,35 @@
+version: 0.2
+
+env:
+  variables:
+    IMAGE_REPO_NAME: "ecommerce-build-dev"    # ECR repository name
+    IMAGE_TAG: "latest"                         # Image tag, can be the commit hash or a version number
+
+phases:
+  pre_build:
+    commands:
+      - echo "Starting pre-build..."
+      - echo "Installing dependencies..."
+      - pip install -r requirements.txt
+      - echo "Logging in to ECR..."
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+      - REPOSITORY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}
+      - echo "REPOSITORY_URI=$REPOSITORY_URI"
+
+  build:
+    commands:
+      - echo "Starting build..."
+      - echo "Creating Docker image..."
+      - docker build -t $IMAGE_REPO_NAME .
+      - docker tag $IMAGE_REPO_NAME:latest $REPOSITORY_URI:$IMAGE_TAG
+
+  post_build:
+    commands:
+      - echo "Build complete. Starting Docker image push to ECR..."
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo "Push complete."
+
+artifacts:
+  files:
+    - "**/*"
+  discard-paths: yes

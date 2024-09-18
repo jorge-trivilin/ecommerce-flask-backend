@@ -128,7 +128,7 @@ def sample_user(session):
 
 def test_register_user(client, new_user_data):
     """Test registering a new user successfully."""
-    response = client.post("/api/auth/register", json=new_user_data)
+    response = client.post("/auth/register", json=new_user_data)
     assert response.status_code == 201
     data = json.loads(response.data)
     assert data["msg"] == "User registered successfully"
@@ -144,7 +144,7 @@ def test_register_existing_username(client, sample_user):
         "email": "anotheremail@example.com",
         "password": "password",
     }
-    response = client.post("/api/auth/register", json=existing_user_data)
+    response = client.post("/auth/register", json=existing_user_data)
     assert response.status_code == 400
     data = json.loads(response.data)
     assert data["msg"] == "Username already exists"
@@ -157,7 +157,7 @@ def test_register_existing_email(client, sample_user):
         "email": sample_user.email,
         "password": "password",
     }
-    response = client.post("/api/auth/register", json=existing_email_data)
+    response = client.post("/auth/register", json=existing_email_data)
     assert response.status_code == 400
     data = json.loads(response.data)
     assert data["msg"] == "Email already exists"
@@ -166,7 +166,7 @@ def test_register_existing_email(client, sample_user):
 def test_login_success(client, sample_user):
     """Test logging in with valid credentials."""
     login_data = {"username": sample_user.username, "password": "password"}
-    response = client.post("/api/auth/login", json=login_data)
+    response = client.post("/auth/login", json=login_data)
     assert response.status_code == 200
     data = json.loads(response.data)
     assert "access_token" in data
@@ -175,7 +175,7 @@ def test_login_success(client, sample_user):
 def test_login_invalid_credentials(client):
     """Test logging in with invalid credentials."""
     invalid_login_data = {"username": "wronguser", "password": "wrongpassword"}
-    response = client.post("/api/auth/login", json=invalid_login_data)
+    response = client.post("/auth/login", json=invalid_login_data)
     assert response.status_code == 401
     data = json.loads(response.data)
     assert data["msg"] == "Invalid credentials"

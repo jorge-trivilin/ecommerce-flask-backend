@@ -6,7 +6,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models import db, User, Product, Cart, CartItem
 
-cart_bp = Blueprint("cart_bp", __name__, url_prefix="/api/cart")
+cart_bp = Blueprint("cart_bp", __name__, url_prefix="/cart")
 
 
 @cart_bp.route("", methods=["GET"])

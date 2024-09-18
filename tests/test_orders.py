@@ -143,7 +143,7 @@ def auth_headers(app, client):
 
     # Log in and get the token
     response = client.post(
-        "/api/auth/login",
+        "/auth/login",
         json={
             "username": "testuser",
             "password": "password"})
@@ -226,7 +226,7 @@ def test_place_order_with_empty_cart(client, auth_headers, sample_user):  # pyli
         auth_headers (dict): Headers including the Bearer token for authentication.
         sample_user (User): The sample user for the test.
     """
-    response = client.post("/api/orders", headers=auth_headers)
+    response = client.post("/orders", headers=auth_headers)
     assert response.status_code == 400
     assert json.loads(response.data)["msg"] == "Cart is empty"
 
@@ -243,14 +243,14 @@ def test_place_order_success(client, auth_headers, sample_cart):  # pylint: disa
         auth_headers (dict): Headers including the Bearer token for authentication.
         sample_cart (Cart): The sample cart with items for the test.
     """
-    response = client.post("/api/orders", headers=auth_headers)
+    response = client.post("/orders", headers=auth_headers)
     assert response.status_code == 201
     data = json.loads(response.data)
     assert data["msg"] == "Order placed successfully"
     assert "order_id" in data
 
     # Verify that the cart is cleared after placing the order
-    cart_response = client.get("/api/cart", headers=auth_headers)
+    cart_response = client.get("/cart", headers=auth_headers)
     cart_data = json.loads(cart_response.data)
     assert cart_data["cart"] == []
 
@@ -268,10 +268,10 @@ def test_get_order_history(client, auth_headers, sample_cart):  # pylint: disabl
         sample_cart (Cart): The sample cart used to place an order for the test.
     """
     # Place an order first
-    client.post("/api/orders", headers=auth_headers)
+    client.post("/orders", headers=auth_headers)
 
     # Fetch order history
-    response = client.get("/api/orders/history", headers=auth_headers)
+    response = client.get("/orders/history", headers=auth_headers)
     assert response.status_code == 200
     data = json.loads(response.data)
     assert len(data["orders"]) == 1
@@ -292,11 +292,11 @@ def test_get_order_details(client, auth_headers, sample_cart):  # pylint: disabl
         sample_cart (Cart): The sample cart used to place an order for the test.
     """
     # Place an order first
-    response = client.post("/api/orders", headers=auth_headers)
+    response = client.post("/orders", headers=auth_headers)
     order_id = json.loads(response.data)["order_id"]
 
     # Get the details of the placed order
-    response = client.get(f"/api/orders/{order_id}", headers=auth_headers)
+    response = client.get(f"/orders/{order_id}", headers=auth_headers)
     assert response.status_code == 200
     data = json.loads(response.data)
     assert "order" in data
@@ -315,6 +315,6 @@ def test_get_nonexistent_order_details(client, auth_headers):
         client (FlaskClient): The test client for making HTTP requests.
         auth_headers (dict): Headers including the Bearer token for authentication.
     """
-    response = client.get("/api/orders/999", headers=auth_headers)
+    response = client.get("/orders/999", headers=auth_headers)
     assert response.status_code == 404
     assert json.loads(response.data)["msg"] == "Pedido não encontrado"

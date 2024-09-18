@@ -31,14 +31,13 @@ Example:
 from flask import Blueprint
 from .auth import auth_bp
 from .products import products_bp
-from .orders import orders_bp
+# from .orders import orders_bp
+from .cart import cart_bp
 
 # Main Blueprint creation for routes
 routes_bp = Blueprint("routes", __name__)
 
-# Blueprint registrations inside main Blueprint
-routes_bp.register_blueprint(auth_bp, url_prefix="/api/auth")
-routes_bp.register_blueprint(products_bp, url_prefix="/api/products")
-routes_bp.register_blueprint(
-    orders_bp, url_prefix="/api/orders"
-)
+routes_bp.register_blueprint(auth_bp, url_prefix="/auth")
+routes_bp.register_blueprint(products_bp)
+# routes_bp.register_blueprint(orders_bp)
+routes_bp.register_blueprint(cart_bp)

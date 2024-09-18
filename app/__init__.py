@@ -18,7 +18,8 @@ from flask import Flask
 from flask_migrate import Migrate # type: ignore
 from config import Config 
 from app.extensions import db, jwt
-from app.routes import routes_bp, orders_bp
+from app.routes import routes_bp
+from app.routes.orders import orders_bp
 from app.routes.cart import cart_bp
 from app.error_handlers import register_error_handlers
 
@@ -40,12 +41,12 @@ def create_app(config_class=Config) -> Flask:
 
     db.init_app(app)
     jwt.init_app(app)
-    migrations = Migrate(app, db)
+    Migrate(app, db)
 
     # Register blueprints
     app.register_blueprint(cart_bp)
     app.register_blueprint(routes_bp)
-    app.register_blueprint(orders_bp, url_prefix="/api")
+    app.register_blueprint(orders_bp)
 
     # Register global error handlers
     register_error_handlers(app)

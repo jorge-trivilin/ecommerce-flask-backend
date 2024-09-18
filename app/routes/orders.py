@@ -36,10 +36,10 @@ from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models import db, User, CartItem, Order, OrderItem
 
-orders_bp = Blueprint("orders", __name__)
+orders_bp = Blueprint("orders", __name__, url_prefix="/orders")
 
 
-@orders_bp.route("/orders", methods=["POST"])
+@orders_bp.route("", methods=["POST"])
 @jwt_required()
 def place_order():
     """
@@ -81,7 +81,7 @@ def place_order():
                    "order_id": order.id}), 201
 
 
-@orders_bp.route("/orders/history", methods=["GET"])
+@orders_bp.route("/history", methods=["GET"])
 @jwt_required()
 def get_order_history():
     """
@@ -111,7 +111,7 @@ def get_order_history():
     return jsonify({"orders": order_history}), 200
 
 
-@orders_bp.route("/orders/<int:order_id>", methods=["GET"])
+@orders_bp.route("/<int:order_id>", methods=["GET"])
 @jwt_required()
 def get_order_details(order_id):
     """

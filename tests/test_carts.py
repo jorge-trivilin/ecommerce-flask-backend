@@ -115,7 +115,7 @@ def auth_headers(app, client):
 
     # Log in and get the token
     response = client.post(
-        "/api/auth/login",
+        "/auth/login",
         json={
             "username": "testuser",
             "password": "password"})
@@ -163,7 +163,7 @@ def test_view_empty_cart(client, auth_headers):
         client (FlaskClient): The test client for the Flask application.
         auth_headers (dict): Authorization headers with the Bearer token.
     """
-    response = client.get("/api/cart", headers=auth_headers)
+    response = client.get("/cart", headers=auth_headers)
     assert response.status_code == 200
     data = json.loads(response.data)
     assert data["cart"] == []
@@ -183,7 +183,7 @@ def test_add_to_cart(client, auth_headers, sample_product):
         sample_product (Product): The sample product instance to add to the cart.
     """
     response = client.post(
-        "/api/cart",
+        "/cart",
         json={"product_id": sample_product.id, "quantity": 2},
         headers=auth_headers,
     )
@@ -191,7 +191,7 @@ def test_add_to_cart(client, auth_headers, sample_product):
     assert json.loads(response.data)["msg"] == "Product added to cart"
 
     # Check if product was added to cart
-    response = client.get("/api/cart", headers=auth_headers)
+    response = client.get("/cart", headers=auth_headers)
     data = json.loads(response.data)
     assert len(data["cart"]) == 1
     assert data["cart"][0]["product_id"] == sample_product.id
@@ -212,21 +212,21 @@ def test_remove_from_cart(client, auth_headers, sample_product):
     """
     # Adding product to cart
     client.post(
-        "/api/cart",
+        "/cart",
         json={"product_id": sample_product.id, "quantity": 1},
         headers=auth_headers,
     )
 
     # Removing product from cart
     response = client.delete(
-        f"/api/cart/{sample_product.id}",
+        f"/cart/{sample_product.id}",
         headers=auth_headers)
     assert response.status_code == 200
     assert json.loads(response.data)[
         "msg"] == "Item successfully removed from cart"
 
     # Check if cart is empty
-    response = client.get("/api/cart", headers=auth_headers)
+    response = client.get("/cart", headers=auth_headers)
     data = json.loads(response.data)
     assert data["cart"] == []
 
@@ -242,7 +242,7 @@ def test_remove_nonexistent_item(client, auth_headers):
         client (FlaskClient): The test client for the Flask application.
         auth_headers (dict): Authorization headers with the Bearer token.
     """
-    response = client.delete("/api/cart/999", headers=auth_headers)
+    response = client.delete("/cart/999", headers=auth_headers)
     assert response.status_code == 404
     assert json.loads(response.data)["msg"] == "Cart not found"
 
@@ -261,14 +261,14 @@ def test_add_existing_product(client, auth_headers, sample_product):
     """
     # Adding product for the first time
     client.post(
-        "/api/cart",
+        "/cart",
         json={"product_id": sample_product.id, "quantity": 1},
         headers=auth_headers,
     )
 
     # Adding the same product again
     response = client.post(
-        "/api/cart",
+        "/cart",
         json={"product_id": sample_product.id, "quantity": 2},
         headers=auth_headers,
     )
@@ -276,7 +276,7 @@ def test_add_existing_product(client, auth_headers, sample_product):
     assert json.loads(response.data)["msg"] == "Product added to cart"
 
     # Check if quantity was updated
-    response = client.get("/api/cart", headers=auth_headers)
+    response = client.get("/cart", headers=auth_headers)
     data = json.loads(response.data)
     assert len(data["cart"]) == 1
     assert data["cart"][0]["product_id"] == sample_product.id
