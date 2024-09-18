@@ -9,29 +9,39 @@ jobs:
     environment: ${{ github.ref_name == 'staging' && 'staging' || github.ref_name == 'production' && 'production' || 'development' }}
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-    - name: Install dependencies
-      run: |
-        make install
-    - name: Lint code
-      run: |
-        make lint
-    - name: Test code
-      run: |
-        make test
-    - name: Format code
-      run: |
-        make format
-        git config --global user.email "jorge.trivilin@gmail.com"
-        git config --global user.name "Jorge Trivilin"
-        git add hello.py
-        git commit -m "Auto-format code" || echo "No changes to commit"
-    - name: Push changes
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run:
-        git push origin main
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+      
+      - name: Cache pip packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/dev-requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      - name: Install dependencies
+        run: make install
+  
+      - name: Lint code
+        run: make lint
+  
+      - name: Test code
+        run: make test
+  
+      - name: Format code
+        run: |
+          make format
+          git config --global user.email "jorge.trivilin@gmail.com"
+          git config --global user.name "Jorge Trivilin"
+          git diff --exit-code || (git add . && git commit -m "Auto-format code" && echo "Changes committed")
+  
+      - name: Push changes
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git push origin ${GITHUB_REF#refs/heads/}

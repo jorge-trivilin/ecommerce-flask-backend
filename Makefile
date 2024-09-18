@@ -7,12 +7,17 @@ PYLINT = pylint
 AUTOPEP8 = autopep8
 PYTEST = pytest
 
-# Install dependencies
-install:
+# Install all dependencies
+install: install-prod install-dev
+
+# Install production dependencies
+install-prod:
 	$(PIP) install --upgrade pip
-	$(PIP) install pytest==6.2.5
-	$(PIP) install pylint==2.10.2
-	$(PIP) install autopep8==1.5.7
+	$(PIP) install -r requirements.txt
+
+# Install development dependencies
+install-dev:
+	$(PIP) install -r dev-requirements.txt
 
 # Run linting
 lint:
@@ -32,4 +37,4 @@ clean:
 	find . -type d -name '__pycache__' -delete
 
 # Default target
-.PHONY: install lint test format clean
+.PHONY: install install-prod install-dev lint test format clean
