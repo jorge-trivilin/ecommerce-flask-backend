@@ -1,6 +1,6 @@
 # models.py
 
-'''
+"""
 models.py: Database Models for E-commerce Backend
 
 This module defines the database schema for a simple e-commerce platform using SQLAlchemy ORM.
@@ -34,57 +34,73 @@ Usage:
 Note:
     Ensure that you initialize and configure SQLAlchemy with your Flask application before
     using these models.
-'''
-
+"""
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import Mapped, relationship, mapped_column
+from sqlalchemy import String, Boolean, Text, Float, ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
+from typing import List, Optional
 
-db = SQLAlchemy()
+db: SQLAlchemy = SQLAlchemy() 
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False)
-    cart = db.relationship('Cart', backref='user', uselist=False)
-    orders = db.relationship('Order', backref='user', lazy=True)
+class User(db.Model): # type: ignore
+    __tablename__ = 'user'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(128), nullable=False)
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
+    cart: Mapped[Optional["Cart"]] = relationship("Cart", back_populates="user", uselist=False)
+    orders: Mapped[List["Order"]] = relationship("Order", back_populates="user")
 
-    def set_password(self, password):
+    def set_password(self, password: str) -> None:
         self.password_hash = generate_password_hash(password)
 
-    def check_password(self, password):
+    def check_password(self, password: str) -> bool:
         return check_password_hash(self.password_hash, password)
-    
-class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    price = db.Column(db.Float, nullable=False)
-    stock = db.Column(db.Integer, default=0)
 
-class Cart(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    items = db.relationship('CartItem', backref='cart', lazy=True)
 
-class CartItem(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
-    quantity = db.Column(db.Integer, default=1)
-    product = db.relationship('Product')
+class Product(db.Model): # type: ignore
+    __tablename__ = 'product'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=True)
+    price: Mapped[float] = mapped_column(Float, nullable=False)
+    stock: Mapped[int] = mapped_column(default=0)
 
-class Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    order_items = db.relationship('OrderItem', backref='order', lazy=True)
-    total = db.Column(db.Float, nullable=False)
 
-class OrderItem(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
-    quantity = db.Column(db.Integer, default=1)
-    price = db.Column(db.Float, nullable=False)
-    product = db.relationship('Product')
+class Cart(db.Model): # type: ignore
+    __tablename__ = 'cart'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    user: Mapped["User"] = relationship("User", back_populates="cart")
+    items: Mapped[List["CartItem"]] = relationship("CartItem", back_populates="cart")
+
+
+class CartItem(db.Model): # type: ignore
+    __tablename__ = 'cart_item'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    cart_id: Mapped[int] = mapped_column(ForeignKey("cart.id"), nullable=False)
+    product_id: Mapped[int] = mapped_column(ForeignKey("product.id"), nullable=False)
+    quantity: Mapped[int] = mapped_column(default=1)
+    cart: Mapped["Cart"] = relationship("Cart", back_populates="items")
+    product: Mapped["Product"] = relationship("Product")
+
+
+class Order(db.Model): # type: ignore
+    __tablename__ = 'order'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    total: Mapped[float] = mapped_column(Float, nullable=False)
+    user: Mapped["User"] = relationship("User", back_populates="orders")
+    order_items: Mapped[List["OrderItem"]] = relationship("OrderItem", back_populates="order")
+
+class OrderItem(db.Model): # type: ignore
+    __tablename__ = 'order_item'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    order_id: Mapped[int] = mapped_column(ForeignKey("order.id"), nullable=False)
+    product_id: Mapped[int] = mapped_column(ForeignKey("product.id"), nullable=False)
+    quantity: Mapped[int] = mapped_column(default=1)
+    price: Mapped[float] = mapped_column(Float, nullable=False)
+    order: Mapped["Order"] = relationship("Order", back_populates="order_items")
+    product: Mapped["Product"] = relationship("Product")
