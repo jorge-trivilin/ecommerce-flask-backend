@@ -14,8 +14,9 @@ Imports:
     - register_error_handlers: Function to register global error handlers.
 """
 
-from flask import Flask  # Third party import
-from config import Config  # First party import
+from flask import Flask
+from flask_migrate import Migrate # type: ignore
+from config import Config 
 from app.extensions import db, jwt
 from app.routes import routes_bp, orders_bp
 from app.routes.cart import cart_bp
@@ -39,6 +40,7 @@ def create_app(config_class=Config) -> Flask:
 
     db.init_app(app)
     jwt.init_app(app)
+    migrations = Migrate(app, db)
 
     # Register blueprints
     app.register_blueprint(cart_bp)
