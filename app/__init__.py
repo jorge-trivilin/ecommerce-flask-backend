@@ -11,24 +11,25 @@ Imports:
     - SQLAlchemy: The SQLAlchemy class used to manage the database.
     - JWTManager: The JWTManager class used for handling JSON Web Tokens.
     - routes_bp: The main routes blueprint (imported inside the function to avoid circular imports).
+    - register_error_handlers: Function to register global error handlers.
 """
 
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager
-from app.routes import routes_bp
+from flask import Flask  # Third party import
+from config import Config  # First party import
+from app.extensions import db, jwt
+from app.routes import routes_bp, orders_bp
+from app.routes.cart import cart_bp
+from app.error_handlers import register_error_handlers
 
-db = SQLAlchemy()
-jwt = JWTManager()
+# from app.models import User, Product, Cart, CartItem, Order, OrderItem
 
 
-def create_app(config_class="config.Config"):
+def create_app(config_class=Config) -> Flask:
     """
     Creates and configures an instance of the Flask application.
 
     Args:
-        config_class (str): The configuration class to use for the application.
-                            Defaults to "config.Config".
+        config_class (Type[ConfigType]): The configuration class to use for the application.
 
     Returns:
         Flask: The configured Flask application instance.
@@ -39,7 +40,12 @@ def create_app(config_class="config.Config"):
     db.init_app(app)
     jwt.init_app(app)
 
-    # Register main blueprint
+    # Register blueprints
+    app.register_blueprint(cart_bp)
     app.register_blueprint(routes_bp)
+    app.register_blueprint(orders_bp, url_prefix="/api")
+
+    # Register global error handlers
+    register_error_handlers(app)
 
     return app

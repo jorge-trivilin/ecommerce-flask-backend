@@ -6,10 +6,10 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models import db, User, Product, Cart, CartItem
 
-cart_bp = Blueprint("cart", __name__)
+cart_bp = Blueprint("cart_bp", __name__, url_prefix="/api/cart")
 
 
-@cart_bp.route("/cart", methods=["GET"])
+@cart_bp.route("", methods=["GET"])
 @jwt_required()
 def view_cart():
     """
@@ -36,7 +36,7 @@ def view_cart():
     return jsonify({"cart": cart_items}), 200
 
 
-@cart_bp.route("/cart", methods=["POST"])
+@cart_bp.route("", methods=["POST"])
 @jwt_required()
 def add_to_cart():
     """
@@ -56,17 +56,45 @@ def add_to_cart():
         db.session.add(cart)
         db.session.commit()
     product = Product.query.get_or_404(data["product_id"])
-    cart_item = CartItem.query.filter_by(
-        cart_id=cart.id, product_id=product.id).first()
+    cart_item = CartItem.query.filter_by(cart_id=cart.id, product_id=product.id).first()
     if cart_item:
         cart_item.quantity += data.get("quantity", 1)
     else:
         cart_item = CartItem(
-            cart_id=cart.id,
-            product_id=product.id,
-            quantity=data.get(
-                "quantity",
-                1))
+            cart_id=cart.id, product_id=product.id, quantity=data.get("quantity", 1)
+        )
         db.session.add(cart_item)
     db.session.commit()
     return jsonify({"msg": "Product added to cart"}), 200
+
+
+@cart_bp.route("/<int:product_id>", methods=["DELETE"])
+@jwt_required()
+def remove_from_cart(product_id):
+    """
+    Remove an item from the user's cart.
+
+    This endpoint removes a specific product from the current user's cart.
+    If the item is not in the cart, it returns an error message.
+
+    Args:
+        product_id (int): The ID of the product to be removed from the cart.
+
+    Returns:
+        JSON response with a success or error message.
+    """
+    user = User.query.get(get_jwt_identity())
+    cart = user.cart
+
+    if not cart:
+        return jsonify({"msg": "Cart not found"}), 404
+
+    cart_item = CartItem.query.filter_by(cart_id=cart.id, product_id=product_id).first()
+
+    if not cart_item:
+        return jsonify({"msg": "Item not found in cart"}), 404
+
+    db.session.delete(cart_item)
+    db.session.commit()
+
+    return jsonify({"msg": "Item successfully removed from cart"}), 200

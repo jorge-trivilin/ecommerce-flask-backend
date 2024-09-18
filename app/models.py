@@ -34,13 +34,14 @@ Note:
     using these models.
 """
 
+from datetime import datetime
 from typing import List, Optional
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import Mapped, relationship, mapped_column
+
 from sqlalchemy import String, Boolean, Text, Float, ForeignKey
+from sqlalchemy.orm import Mapped, relationship, mapped_column
 from werkzeug.security import generate_password_hash, check_password_hash
 
-db: SQLAlchemy = SQLAlchemy()
+from app.extensions import db
 
 
 class User(db.Model):  # type: ignore
@@ -59,17 +60,14 @@ class User(db.Model):  # type: ignore
 
     __tablename__ = "user"
     id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(
-        String(80), unique=True, nullable=False)
-    email: Mapped[str] = mapped_column(
-        String(120), unique=True, nullable=False)
+    username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(128), nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     cart: Mapped[Optional["Cart"]] = relationship(
         "Cart", back_populates="user", uselist=False
     )
-    orders: Mapped[List["Order"]] = relationship(
-        "Order", back_populates="user")
+    orders: Mapped[List["Order"]] = relationship("Order", back_populates="user")
 
     def set_password(self, password: str) -> None:
         """
@@ -128,8 +126,7 @@ class Cart(db.Model):  # type: ignore
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     user: Mapped["User"] = relationship("User", back_populates="cart")
-    items: Mapped[List["CartItem"]] = relationship(
-        "CartItem", back_populates="cart")
+    items: Mapped[List["CartItem"]] = relationship("CartItem", back_populates="cart")
 
 
 class CartItem(db.Model):  # type: ignore
@@ -148,8 +145,7 @@ class CartItem(db.Model):  # type: ignore
     __tablename__ = "cart_item"
     id: Mapped[int] = mapped_column(primary_key=True)
     cart_id: Mapped[int] = mapped_column(ForeignKey("cart.id"), nullable=False)
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("product.id"), nullable=False)
+    product_id: Mapped[int] = mapped_column(ForeignKey("product.id"), nullable=False)
     quantity: Mapped[int] = mapped_column(default=1)
     cart: Mapped["Cart"] = relationship("Cart", back_populates="items")
     product: Mapped["Product"] = relationship("Product")
@@ -163,6 +159,7 @@ class Order(db.Model):  # type: ignore
         id: The unique identifier for the order.
         user_id: The identifier of the user who placed the order.
         total: The total amount of the order.
+        date: The date and time when the order was placed.
         user: The user who placed the order (one-to-one relationship).
         order_items: The items in the order (one-to-many relationship).
     """
@@ -171,6 +168,7 @@ class Order(db.Model):  # type: ignore
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     total: Mapped[float] = mapped_column(Float, nullable=False)
+    date: Mapped[datetime] = mapped_column(default=datetime.utcnow, nullable=False)
     user: Mapped["User"] = relationship("User", back_populates="orders")
     order_items: Mapped[List["OrderItem"]] = relationship(
         "OrderItem", back_populates="order"
@@ -193,12 +191,9 @@ class OrderItem(db.Model):  # type: ignore
 
     __tablename__ = "order_item"
     id: Mapped[int] = mapped_column(primary_key=True)
-    order_id: Mapped[int] = mapped_column(
-        ForeignKey("order.id"), nullable=False)
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("product.id"), nullable=False)
+    order_id: Mapped[int] = mapped_column(ForeignKey("order.id"), nullable=False)
+    product_id: Mapped[int] = mapped_column(ForeignKey("product.id"), nullable=False)
     quantity: Mapped[int] = mapped_column(default=1)
     price: Mapped[float] = mapped_column(Float, nullable=False)
-    order: Mapped["Order"] = relationship(
-        "Order", back_populates="order_items")
+    order: Mapped["Order"] = relationship("Order", back_populates="order_items")
     product: Mapped["Product"] = relationship("Product")

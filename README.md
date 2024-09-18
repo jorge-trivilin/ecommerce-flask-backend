@@ -1,4 +1,3 @@
-```markdown
 # ecommerce-flask-backend
 
 ## Assignment

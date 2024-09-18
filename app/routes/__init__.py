@@ -31,6 +31,7 @@ Example:
 from flask import Blueprint
 from .auth import auth_bp
 from .products import products_bp
+from .orders import orders_bp
 
 # Main Blueprint creation for routes
 routes_bp = Blueprint("routes", __name__)
@@ -38,3 +39,6 @@ routes_bp = Blueprint("routes", __name__)
 # Blueprint registrations inside main Blueprint
 routes_bp.register_blueprint(auth_bp, url_prefix="/api/auth")
 routes_bp.register_blueprint(products_bp, url_prefix="/api/products")
+routes_bp.register_blueprint(
+    orders_bp, url_prefix="/api/orders"
+)
