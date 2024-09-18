@@ -43,13 +43,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 @pytest.fixture
 def app():
     """
     Fixture that creates and configures a new Flask application instance for testing.
-    
-    It sets up the application context, creates the database tables, and logs 
-    the registered routes. After yielding the application, it removes the database 
+
+    It sets up the application context, creates the database tables, and logs
+    the registered routes. After yielding the application, it removes the database
     session and drops all tables to clean up.
 
     Returns:
@@ -77,7 +78,7 @@ def app():
 def client(app):
     """
     Fixture that provides a test client for the Flask application.
-    
+
     This client is used to make requests to the application during tests.
 
     Args:
@@ -93,7 +94,7 @@ def client(app):
 def auth_headers(app, client):
     """
     Fixture that creates a test user, logs them in, and provides the authorization headers.
-    
+
     It creates a user, sets their password, and logs in to obtain an authentication token.
     The token is used for making authorized requests in the tests.
 
@@ -114,8 +115,10 @@ def auth_headers(app, client):
 
     # Log in and get the token
     response = client.post(
-        "/api/auth/login", json={"username": "testuser", "password": "password"}
-    )
+        "/api/auth/login",
+        json={
+            "username": "testuser",
+            "password": "password"})
     data = json.loads(response.data)
     token = data.get("access_token")
 
@@ -129,7 +132,7 @@ def auth_headers(app, client):
 def sample_product(app):
     """
     Fixture to create a sample product for testing.
-    
+
     This fixture creates a product instance, adds it to the database, and returns it.
     The product can be used in tests to verify cart operations.
 
@@ -144,15 +147,16 @@ def sample_product(app):
         db.session.add(product)
         db.session.commit()
 
-        # Access the product ID to prevent it from being loaded later (e.g., lazy load)
-        product_id = product.id # pylint: disable=unused-argument
+        # Access the product ID to prevent it from being loaded later (e.g.,
+        # lazy load)
+        product_id = product.id  # pylint: disable=unused-argument
         return product
 
 
 def test_view_empty_cart(client, auth_headers):
     """
     Test the endpoint for viewing an empty cart.
-    
+
     Makes a GET request to the cart endpoint and verifies that the cart is empty.
 
     Args:
@@ -168,8 +172,8 @@ def test_view_empty_cart(client, auth_headers):
 def test_add_to_cart(client, auth_headers, sample_product):
     """
     Test adding a product to the cart.
-    
-    Makes a POST request to add a product to the cart and verifies that the product 
+
+    Makes a POST request to add a product to the cart and verifies that the product
     has been added with the correct quantity. Then, it checks if the cart contains
     the product with the expected quantity.
 
@@ -197,8 +201,8 @@ def test_add_to_cart(client, auth_headers, sample_product):
 def test_remove_from_cart(client, auth_headers, sample_product):
     """
     Test removing a product from the cart.
-    
-    Adds a product to the cart and then removes it. Verifies that the product 
+
+    Adds a product to the cart and then removes it. Verifies that the product
     has been successfully removed and the cart is empty afterwards.
 
     Args:
@@ -214,9 +218,12 @@ def test_remove_from_cart(client, auth_headers, sample_product):
     )
 
     # Removing product from cart
-    response = client.delete(f"/api/cart/{sample_product.id}", headers=auth_headers)
+    response = client.delete(
+        f"/api/cart/{sample_product.id}",
+        headers=auth_headers)
     assert response.status_code == 200
-    assert json.loads(response.data)["msg"] == "Item successfully removed from cart"
+    assert json.loads(response.data)[
+        "msg"] == "Item successfully removed from cart"
 
     # Check if cart is empty
     response = client.get("/api/cart", headers=auth_headers)
@@ -227,8 +234,8 @@ def test_remove_from_cart(client, auth_headers, sample_product):
 def test_remove_nonexistent_item(client, auth_headers):
     """
     Test removing a non-existent item from the cart.
-    
-    Attempts to remove an item that does not exist in the cart and verifies 
+
+    Attempts to remove an item that does not exist in the cart and verifies
     that a 404 Not Found error is returned with an appropriate message.
 
     Args:
@@ -243,7 +250,7 @@ def test_remove_nonexistent_item(client, auth_headers):
 def test_add_existing_product(client, auth_headers, sample_product):
     """
     Test adding an existing product to the cart and updating the quantity.
-    
+
     Adds a product to the cart for the first time, then adds the same product again
     with a different quantity. Verifies that the quantity is updated correctly in the cart.
 

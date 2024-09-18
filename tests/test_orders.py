@@ -1,8 +1,8 @@
 """
 Unit tests for order-related functionalities in the Flask application.
 
-This module provides test cases for the ordering process, including placing orders, 
-retrieving order history, and fetching details for specific orders. It ensures that 
+This module provides test cases for the ordering process, including placing orders,
+retrieving order history, and fetching details for specific orders. It ensures that
 the order management system functions correctly under various scenarios.
 
 Fixtures:
@@ -12,50 +12,50 @@ Fixtures:
 
 - `client`: Provides a test client for making HTTP requests to the application.
 
-- `auth_headers`: Creates a test user, logs in, and returns the authorization headers 
+- `auth_headers`: Creates a test user, logs in, and returns the authorization headers
   with a Bearer token for authenticated requests.
 
-- `sample_user`: Creates a sample user with a predefined username and email 
+- `sample_user`: Creates a sample user with a predefined username and email
   if it does not already exist.
 
 - `sample_product`: Creates a sample product with predefined attributes.
 
-- `sample_cart`: Creates a sample cart associated with the sample user and adds 
+- `sample_cart`: Creates a sample cart associated with the sample user and adds
   an item to it.
 
 Test Cases:
-- `test_place_order_with_empty_cart`: Tests the behavior when attempting 
-to place an order 
+- `test_place_order_with_empty_cart`: Tests the behavior when attempting
+to place an order
   with an empty cart.
   - **Assertions**: Ensures the response status code is 400,
   and the message indicates the cart is empty.
 
-- `test_place_order_success`: Verifies that an order can be placed successfully when 
+- `test_place_order_success`: Verifies that an order can be placed successfully when
   there are items in the cart.
-  - **Assertions**: Checks the status code, response message, presence of an order ID, 
+  - **Assertions**: Checks the status code, response message, presence of an order ID,
     and ensures the cart is cleared after the order is placed.
 
 - `test_get_order_history`: Tests retrieving the order history for a user.
-  - **Assertions**: Ensures the response status code is 200, verifies the order history 
+  - **Assertions**: Ensures the response status code is 200, verifies the order history
     contains the placed order, and checks the count of items in the order.
 
 - `test_get_order_details`: Verifies that details for a specific order can be retrieved.
-  - **Assertions**: Checks the status code, verifies the presence of order details, 
+  - **Assertions**: Checks the status code, verifies the presence of order details,
     and ensures that the order ID and items are correctly returned.
 
-- `test_get_nonexistent_order_details`: Tests the response when trying to retrieve 
+- `test_get_nonexistent_order_details`: Tests the response when trying to retrieve
   details for a non-existent order.
-  - **Assertions**: Ensures the response status code is 404 and the message indicates 
+  - **Assertions**: Ensures the response status code is 404 and the message indicates
     the order was not found.
 
 Logging:
-- The module uses the logging library for debugging, including creating database tables, 
+- The module uses the logging library for debugging, including creating database tables,
   logging routes, and actions during test setup.
 
 Dependencies:
 - `pytest`: Framework used for writing and running the tests.
 - `flask`: Web framework for the application.
-- `app`: Application components including `create_app`, `db`, and model classes (`User`, 
+- `app`: Application components including `create_app`, `db`, and model classes (`User`,
   `Cart`, `CartItem`, `Product`, `Order`, `OrderItem`).
 - `config`: Configuration settings for the test environment.
 
@@ -83,8 +83,8 @@ def app():
     """
     Fixture for creating and configuring the Flask application.
 
-    Sets up the application context and creates the database tables before yielding 
-    the app instance. After tests complete, it removes the database session and 
+    Sets up the application context and creates the database tables before yielding
+    the app instance. After tests complete, it removes the database session and
     drops all tables to clean up.
 
     Returns:
@@ -113,7 +113,7 @@ def client(app):
     """
     Fixture for creating a test client for the application.
 
-    Provides a test client that can be used to make HTTP requests to the application 
+    Provides a test client that can be used to make HTTP requests to the application
     during tests.
 
     Returns:
@@ -127,7 +127,7 @@ def auth_headers(app, client):
     """
     Fixture for generating authentication headers for requests.
 
-    Creates a test user, logs in to obtain a token, and returns the headers 
+    Creates a test user, logs in to obtain a token, and returns the headers
     required for authenticated requests.
 
     Returns:
@@ -143,8 +143,10 @@ def auth_headers(app, client):
 
     # Log in and get the token
     response = client.post(
-        "/api/auth/login", json={"username": "testuser", "password": "password"}
-    )
+        "/api/auth/login",
+        json={
+            "username": "testuser",
+            "password": "password"})
     data = json.loads(response.data)
     token = data.get("access_token")
 
@@ -159,7 +161,7 @@ def sample_user(app):
     """
     Fixture to create a sample user.
 
-    Creates a user with predefined username and email if it does not already exist 
+    Creates a user with predefined username and email if it does not already exist
     in the database.
 
     Returns:
@@ -197,7 +199,7 @@ def sample_cart(app, sample_user, sample_product):
     """
     Fixture to create a sample cart with an item.
 
-    Creates a cart associated with the sample user and adds a sample product 
+    Creates a cart associated with the sample user and adds a sample product
     to it with a specified quantity.
 
     Returns:
@@ -212,11 +214,11 @@ def sample_cart(app, sample_user, sample_product):
         return cart
 
 
-def test_place_order_with_empty_cart(client, auth_headers, sample_user): # pylint: disable=unused-argument
+def test_place_order_with_empty_cart(client, auth_headers, sample_user):  # pylint: disable=unused-argument
     """
     Test placing an order with an empty cart.
 
-    Attempts to place an order when the cart is empty and verifies that the 
+    Attempts to place an order when the cart is empty and verifies that the
     response indicates the cart is empty.
 
     Parameters:
@@ -229,11 +231,11 @@ def test_place_order_with_empty_cart(client, auth_headers, sample_user): # pylin
     assert json.loads(response.data)["msg"] == "Cart is empty"
 
 
-def test_place_order_success(client, auth_headers, sample_cart): # pylint: disable=unused-argument
+def test_place_order_success(client, auth_headers, sample_cart):  # pylint: disable=unused-argument
     """
     Test placing an order successfully with items in the cart.
 
-    Places an order with items in the cart and verifies that the order is placed 
+    Places an order with items in the cart and verifies that the order is placed
     successfully. Also checks that the cart is cleared after the order.
 
     Parameters:
@@ -253,11 +255,11 @@ def test_place_order_success(client, auth_headers, sample_cart): # pylint: disab
     assert cart_data["cart"] == []
 
 
-def test_get_order_history(client, auth_headers, sample_cart): # pylint: disable=unused-argument
+def test_get_order_history(client, auth_headers, sample_cart):  # pylint: disable=unused-argument
     """
     Test retrieving the order history of a user.
 
-    Places an order and then retrieves the order history to verify that the order 
+    Places an order and then retrieves the order history to verify that the order
     appears in the history with correct details.
 
     Parameters:
@@ -277,11 +279,11 @@ def test_get_order_history(client, auth_headers, sample_cart): # pylint: disable
     assert data["orders"][0]["items_count"] > 0
 
 
-def test_get_order_details(client, auth_headers, sample_cart): # pylint: disable=unused-argument
+def test_get_order_details(client, auth_headers, sample_cart):  # pylint: disable=unused-argument
     """
     Test retrieving the details of a specific order.
 
-    Places an order and then retrieves the details of that specific order to ensure 
+    Places an order and then retrieves the details of that specific order to ensure
     that the order details are correctly returned.
 
     Parameters:
@@ -306,7 +308,7 @@ def test_get_nonexistent_order_details(client, auth_headers):
     """
     Test retrieving details for a non-existent order.
 
-    Attempts to retrieve details for an order that does not exist and verifies 
+    Attempts to retrieve details for an order that does not exist and verifies
     that the response indicates the order was not found.
 
     Parameters:

@@ -2,13 +2,13 @@
 extensions.py
 
 This module initializes and configures extensions for the Flask application.
-It creates instances of commonly used extensions, which can be imported 
+It creates instances of commonly used extensions, which can be imported
 and used throughout the application.
 
 Extensions:
-- db: An instance of SQLAlchemy used for database interactions and ORM 
+- db: An instance of SQLAlchemy used for database interactions and ORM
   (Object-Relational Mapping).
-- jwt: An instance of JWTManager used for managing JSON Web Tokens for 
+- jwt: An instance of JWTManager used for managing JSON Web Tokens for
   authentication and authorization.
 
 Usage:
@@ -16,7 +16,7 @@ To use these extensions in other parts of the application, import them as follow
 
     from app.extensions import db, jwt
 
-This allows for seamless integration of database operations and JWT handling 
+This allows for seamless integration of database operations and JWT handling
 within the Flask app.
 
 Example:

@@ -3,19 +3,19 @@ conftest.py
 
 This module contains unit tests for the application.
 
-It sets up the testing environment by providing fixtures and configurations 
-necessary for running tests. This includes the creation of a test client 
+It sets up the testing environment by providing fixtures and configurations
+necessary for running tests. This includes the creation of a test client
 for making requests and managing the database setup and teardown.
 
 Main Functionality:
-- Provides a test client fixture that sets up the application context 
+- Provides a test client fixture that sets up the application context
   and database schema for testing purposes.
-- Ensures that the database is created before tests run and dropped 
+- Ensures that the database is created before tests run and dropped
   after tests complete, maintaining a clean state for each test module.
 
 Usage:
-To use this module, simply place your test files in the same directory 
-or a subdirectory. The fixtures defined here will be automatically 
+To use this module, simply place your test files in the same directory
+or a subdirectory. The fixtures defined here will be automatically
 available to your tests.
 
 Example:

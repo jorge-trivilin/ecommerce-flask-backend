@@ -1,7 +1,7 @@
 """
 Unit tests for authentication features in the Flask application.
 
-This module includes test cases for user registration and login processes, ensuring that 
+This module includes test cases for user registration and login processes, ensuring that
 authentication endpoints work as expected across various scenarios, both successful and failed.
 
 Fixtures:
@@ -45,13 +45,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 @pytest.fixture
 def app():
     """
     Fixture for creating and configuring the Flask application.
 
-    Sets up the application context and creates the database tables 
-    before yielding the app instance. After tests complete, it removes 
+    Sets up the application context and creates the database tables
+    before yielding the app instance. After tests complete, it removes
     the database session and drops all tables to clean up.
 
     Returns:
@@ -68,6 +69,7 @@ def app():
         logger.debug("Dropping all tables")
         db.drop_all()
         logger.debug("All tables dropped")
+
 
 @pytest.fixture(scope="function")
 def session(app):
@@ -87,18 +89,20 @@ def session(app):
         db.session.remove()
         db.drop_all()
 
+
 @pytest.fixture
 def client(app):
     """
     Fixture for creating a test client for the application.
 
-    This fixture provides a test client that can be used to make requests 
+    This fixture provides a test client that can be used to make requests
     to the application during tests.
 
     Returns:
         FlaskClient: The test client instance.
     """
     return app.test_client()
+
 
 @pytest.fixture
 def new_user_data():
@@ -108,6 +112,7 @@ def new_user_data():
         "email": "newuser@example.com",
         "password": "password",
     }
+
 
 @pytest.fixture
 def sample_user(session):
@@ -120,6 +125,7 @@ def sample_user(session):
         session.commit()
     return user
 
+
 def test_register_user(client, new_user_data):
     """Test registering a new user successfully."""
     response = client.post("/api/auth/register", json=new_user_data)
@@ -129,6 +135,7 @@ def test_register_user(client, new_user_data):
     user = User.query.filter_by(email=new_user_data["email"]).first()
     assert user is not None
     assert user.username == new_user_data["username"]
+
 
 def test_register_existing_username(client, sample_user):
     """Test registering a user with an existing username."""
@@ -142,6 +149,7 @@ def test_register_existing_username(client, sample_user):
     data = json.loads(response.data)
     assert data["msg"] == "Username already exists"
 
+
 def test_register_existing_email(client, sample_user):
     """Test registering a user with an existing email."""
     existing_email_data = {
@@ -154,6 +162,7 @@ def test_register_existing_email(client, sample_user):
     data = json.loads(response.data)
     assert data["msg"] == "Email already exists"
 
+
 def test_login_success(client, sample_user):
     """Test logging in with valid credentials."""
     login_data = {"username": sample_user.username, "password": "password"}
@@ -161,6 +170,7 @@ def test_login_success(client, sample_user):
     assert response.status_code == 200
     data = json.loads(response.data)
     assert "access_token" in data
+
 
 def test_login_invalid_credentials(client):
     """Test logging in with invalid credentials."""

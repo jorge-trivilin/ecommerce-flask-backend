@@ -11,12 +11,12 @@ Main Functionality:
   - 404 Not Found
   - 405 Method Not Allowed
   - 500 Internal Server Error
-- Handles generic exceptions to ensure that all errors are logged 
+- Handles generic exceptions to ensure that all errors are logged
   and returned in a standardized JSON format.
 
 Usage:
-To use this module, call the `register_error_handlers(app)` function 
-with the Flask app instance. This will set up the error handling 
+To use this module, call the `register_error_handlers(app)` function
+with the Flask app instance. This will set up the error handling
 mechanism for the application.
 
 Example:
@@ -58,7 +58,8 @@ def register_error_handlers(app):
 
     @app.errorhandler(400)
     def bad_request(e):  # pylint: disable=unused-argument
-        return jsonify({"error": "Bad Request", "message": str(e.description)}), 400
+        return jsonify(
+            {"error": "Bad Request", "message": str(e.description)}), 400
 
     @app.errorhandler(404)
     def not_found(e):  # pylint: disable=unused-argument
@@ -79,8 +80,7 @@ def register_error_handlers(app):
                 {
                     "error": "Method Not Allowed",
                     "message": "The method is not allowed for the requested URL",
-                }
-            ),
+                }),
             405,
         )
 

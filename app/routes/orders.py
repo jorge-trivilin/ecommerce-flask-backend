@@ -1,8 +1,8 @@
 """
 orders.py
 
-This module defines the routes for handling order-related operations 
-in the e-commerce application. It provides endpoints for placing orders, 
+This module defines the routes for handling order-related operations
+in the e-commerce application. It provides endpoints for placing orders,
 retrieving order history, and fetching details of specific orders.
 
 Main Functionality:
@@ -11,18 +11,18 @@ Main Functionality:
 - Get detailed information about a specific order, including all items in the order.
 
 Endpoints:
-- POST /orders: Places an order for items in the user's cart. 
-  Returns a success message and the order ID if successful, 
+- POST /orders: Places an order for items in the user's cart.
+  Returns a success message and the order ID if successful,
   or an error message if the cart is empty.
-  
+
 - GET /orders/history: Retrieves a list of all orders made by the current user.
   Returns a JSON response containing the user's order list.
-  
+
 - GET /orders/<int:order_id>: Retrieves detailed information about a specific order.
   Requires the order ID as a parameter and returns the order details.
 
 Usage:
-To use this module, it should be registered with a Flask application instance 
+To use this module, it should be registered with a Flask application instance
 to enable the defined routes.
 
 Example:
@@ -77,7 +77,8 @@ def place_order():
     CartItem.query.filter_by(cart_id=cart.id).delete()
     db.session.commit()
 
-    return jsonify({"msg": "Order placed successfully", "order_id": order.id}), 201
+    return jsonify({"msg": "Order placed successfully",
+                   "order_id": order.id}), 201
 
 
 @orders_bp.route("/orders/history", methods=["GET"])
@@ -93,7 +94,9 @@ def get_order_history():
         JSON response containing the user's order list.
     """
     user = User.query.get(get_jwt_identity())
-    orders = Order.query.filter_by(user_id=user.id).order_by(Order.id.desc()).all()
+    orders = Order.query.filter_by(
+        user_id=user.id).order_by(
+        Order.id.desc()).all()
 
     order_history = [
         {
