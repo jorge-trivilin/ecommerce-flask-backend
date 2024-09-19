@@ -1,3 +1,11 @@
+"""
+Alembic environment configuration for Flask-SQLAlchemy.
+
+This module sets up the Alembic environment for database migrations.
+It integrates with Flask-SQLAlchemy to use the application's database configuration
+and provides functions for running migrations in both online and offline modes.
+"""
+
 import logging
 from logging.config import fileConfig
 
@@ -16,6 +24,15 @@ logger = logging.getLogger("alembic.env")
 
 
 def get_engine():
+    """
+    Retrieve the SQLAlchemy engine from the Flask application.
+
+    This function attempts to get the engine using different methods
+    to support various versions of Flask-SQLAlchemy.
+
+    Returns:
+        SQLAlchemy engine instance
+    """
     try:
         # this works with Flask-SQLAlchemy<3 and Alchemical
         return current_app.extensions["migrate"].db.get_engine()
@@ -25,6 +42,15 @@ def get_engine():
 
 
 def get_engine_url():
+    """
+    Get the database URL from the SQLAlchemy engine.
+
+    This function retrieves the URL as a string, handling different
+    SQLAlchemy versions and escaping percent signs.
+
+    Returns:
+        str: The database URL
+    """
     try:
         return get_engine().url.render_as_string(hide_password=False).replace("%", "%%")
     except AttributeError:
@@ -45,6 +71,15 @@ target_db = current_app.extensions["migrate"].db
 
 
 def get_metadata():
+    """
+    Retrieve the metadata from the SQLAlchemy database instance.
+
+    This function handles different versions of Flask-SQLAlchemy
+    to get the correct metadata object.
+
+    Returns:
+        MetaData: The SQLAlchemy metadata object
+    """
     if hasattr(target_db, "metadatas"):
         return target_db.metadatas[None]
     return target_db.metadata
@@ -81,6 +116,17 @@ def run_migrations_online():
     # when there are no changes to the schema
     # reference: http://alembic.zzzcomputing.com/en/latest/cookbook.html
     def process_revision_directives(context, revision, directives):
+        """
+        Prevent auto-migration when there are no changes to the schema.
+
+        This callback is used to check if any schema changes are detected.
+        If no changes are found, it clears the directives to skip the migration.
+
+        Args:
+            context: The migration context
+            revision: The revision object
+            directives: List of directives for the migration
+        """
         if getattr(config.cmd_opts, "autogenerate", False):
             script = directives[0]
             if script.upgrade_ops.is_empty():

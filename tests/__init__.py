@@ -1,27 +1,32 @@
 """
-conftest.py
+Test configuration and fixtures for the Flask application.
 
-This module contains unit tests for the application.
+This module sets up the testing environment for the Flask application. It provides
+fixtures and configurations necessary for running tests, including database setup
+and teardown.
 
-It sets up the testing environment by providing fixtures and configurations
-necessary for running tests. This includes the creation of a test client
-for making requests and managing the database setup and teardown.
+Key components:
+- Logging configuration: Sets up logging for debugging test execution.
+- test_client fixture: Creates a Flask test client with a test database for each test module.
 
-Main Functionality:
-- Provides a test client fixture that sets up the application context
-  and database schema for testing purposes.
-- Ensures that the database is created before tests run and dropped
-  after tests complete, maintaining a clean state for each test module.
+The module uses pytest for test management and Flask's testing utilities for creating
+a test client. It also manages the database lifecycle, creating tables before tests
+and dropping them after tests are complete.
 
 Usage:
-To use this module, simply place your test files in the same directory
-or a subdirectory. The fixtures defined here will be automatically
-available to your tests.
+    This module is automatically used by pytest when running tests. The fixtures
+    defined here are available to all test files in the same directory or subdirectories.
 
 Example:
-    def test_example(test_client):
-        response = test_client.get('/some-endpoint')
+    To use the test client in a test file:
+
+    def test_some_route(test_client):
+        response = test_client.get('/some-route')
         assert response.status_code == 200
+
+Note:
+    Make sure that the TestConfig is properly set up in the config.py file to use
+    a test-specific database (e.g., an in-memory SQLite database).
 """
 
 import logging

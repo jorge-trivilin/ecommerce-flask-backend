@@ -1,9 +1,20 @@
-# Ignore Python cache directories
+# Pycache stuff
+app/__pycache__/
+app/__pycache__/models.cpython-312.pyc
 __pycache__/
 *.pyc
 
-# Ignore pytest cache directory
+# Pytest stuff
 .pytest_cache/
 
-app/__pycache__/
-app/__pycache__/models.cpython-312.pyc
+# Pylit stuff
+.pylintrc
+
+# Env file
+.env
+
+# Obsidian
+.obsidian
+
+# temp
+documentation.md
