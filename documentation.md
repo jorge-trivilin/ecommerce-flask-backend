@@ -1,6 +1,10 @@
 # Ecommerce-Flask-Backend
 ---
 
+repo: https://github.com/jorge-trivilin/ecommerce-flask-backend
+video: https://www.youtube.com/watch?v=UPkdGN9MUZg
+build artifacts: https://encurtador.com.br/M8pIf
+
 ## Assignment
 ---
 
