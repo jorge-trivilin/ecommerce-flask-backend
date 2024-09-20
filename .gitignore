@@ -1,0 +1,29 @@
+# Pycache stuff
+app/__pycache__/
+app/__pycache__/models.cpython-312.pyc
+__pycache__/
+*.pyc
+__pycache__
+app/__pycache__/routes
+tests/__pycache__
+
+# Pytest stuff
+.pytest_cache/
+
+.ruff_cache
+
+# Pylit stuff
+.pylintrc
+
+# Env file
+.env
+
+# Obsidian
+.obsidian
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# pytest cache
+.pytest_cache/
