@@ -10,6 +10,8 @@ tests/__pycache__
 # Pytest stuff
 .pytest_cache/
 
+.ruff_cache
+
 # Pylit stuff
 .pylintrc
 
@@ -19,7 +21,11 @@ tests/__pycache__
 # Obsidian
 .obsidian
 
-# temp
-documentation.md
-
 images/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# pytest cache
+.pytest_cache/
