@@ -43,7 +43,6 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: /app
   discard-paths: no
 
 cache:

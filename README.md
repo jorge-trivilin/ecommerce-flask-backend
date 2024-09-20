@@ -179,27 +179,54 @@ The API will be available at `http://localhost:5000`.
 - `GET /api/orders/history`: View order history
 - `GET /api/orders/<order_id>`: Get order details
 
-## Testing
+## Using the Makefile
 
-To run the test suite:
+The project includes a Makefile to simplify common development tasks. Here are some useful commands:
 
-```
-pytest
-```
+- `make install`: Install all dependencies (both production and development)
+- `make lint`: Run linting checks on the code
+- `make test`: Run the test suite
+- `make format`: Format the code using autopep8
+- `make clean`: Clean up generated files and caches
 
-## Design Decisions and Trade-offs
+To use these commands, simply run `make <command>` in the project root directory.
 
-1. **Authentication**: Used JWT for authentication due to its stateless nature and scalability. The trade-off is that it need to handle token expiration and refreshing.
+## Explanation of the Makefile
 
-2. **Database**: SQLite was chosen for its simplicity and ease of setup, making the project easy to run without additional dependencies. For a production environment, a more robust database like PostgreSQL would be recommended.
+The Makefile defines several tasks:
 
-3. **API Design**: Followed RESTful principles for API design, ensuring clear and consistent endpoints. This makes the API intuitive but may require more endpoints compared to a GraphQL approach.
+- `install`: Installs both production and development dependencies
+- `install-prod`: Installs only production dependencies
+- `install-dev`: Installs development dependencies
+- `lint`: Runs Pylint on the `app` and `tests` directories
+- `test`: Runs pytest with specific flags for efficient testing
+- `format`: Uses autopep8 to format Python files and commits changes if any
+- `clean`: Removes Python cache files and directories
 
-4. **Error Handling**: A centralized error handling mechanism was implemented to ensure consistent error responses across the application.
+These tasks help standardize development processes and make it easier to perform common actions.
 
-5. **Testing**: Focused on unit tests for critical paths. In a larger project, integration tests and end-to-end tests would also be beneficial.
+## GitHub Actions Workflow
 
-6. **Code Structure**: The project follows a modular structure with blueprints, making it easy to extend and maintain. This structure adds some complexity but improves long-term maintainability.
+The project uses GitHub Actions for continuous integration. The workflow is triggered on push events and performs the following steps:
+
+1. Sets up the Python environment
+2. Caches pip packages for faster subsequent runs
+3. Installs dependencies
+4. Runs linting checks
+5. Executes the test suite
+6. Formats the code and pushes any changes
+
+This workflow ensures that code quality is maintained and tests pass with every push to the repository.
+
+## AWS CodeBuild Buildspec
+
+The `buildspec.yml` file defines the build process for AWS CodeBuild. It consists of three phases:
+
+1. **Pre-build**: Sets up the environment, logs into Amazon ECR, and installs dependencies.
+2. **Build**: Runs linting and tests, then builds and tags a Docker image.
+3. **Post-build**: Pushes the Docker image to Amazon ECR and generates an artifact.
+
+This process automates the build and deployment of the application in an AWS environment, ensuring consistency and reliability in the deployment process.
 
 ## Possible Improvements
 
