@@ -216,12 +216,9 @@ def test_remove_from_cart(client, auth_headers, sample_product):
     )
 
     # Removing product from cart
-    response = client.delete(
-        f"/cart/{sample_product.id}",
-        headers=auth_headers)
+    response = client.delete(f"/cart/{sample_product.id}", headers=auth_headers)
     assert response.status_code == 200
-    assert json.loads(response.data)[
-        "msg"] == "Item successfully removed from cart"
+    assert json.loads(response.data)["msg"] == "Item successfully removed from cart"
 
     # Check if cart is empty
     response = client.get("/cart", headers=auth_headers)
@@ -279,3 +276,33 @@ def test_add_existing_product(client, auth_headers, sample_product):
     assert len(data["cart"]) == 1
     assert data["cart"][0]["product_id"] == sample_product.id
     assert data["cart"][0]["quantity"] == 3
+
+
+def test_clear_cart(client, auth_headers, sample_product):
+    """
+    Test clearing the cart.
+
+    This test ensures that the entire cart is cleared when calling the clear_cart endpoint.
+    It first adds a product to the cart, then calls the clear endpoint and verifies that the cart is empty.
+    """
+    # Add a product to the cart
+    client.post(
+        "/cart",
+        json={"product_id": sample_product.id, "quantity": 1},
+        headers=auth_headers,
+    )
+
+    # Verify the cart is not empty
+    response = client.get("/cart", headers=auth_headers)
+    data = json.loads(response.data)
+    assert len(data["cart"]) == 1
+
+    # Clear the cart
+    response = client.delete("/cart/clear", headers=auth_headers)
+    assert response.status_code == 200
+    assert json.loads(response.data)["msg"] == "Cart cleared"
+
+    # Verify the cart is empty
+    response = client.get("/cart", headers=auth_headers)
+    data = json.loads(response.data)
+    assert data["cart"] == []

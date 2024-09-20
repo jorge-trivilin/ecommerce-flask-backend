@@ -38,7 +38,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 from sqlalchemy import String, Boolean, Text, Float, ForeignKey
-from sqlalchemy.orm import Mapped, relationship, mapped_column # type: ignore
+from sqlalchemy.orm import Mapped, relationship, mapped_column  # type: ignore
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.extensions import db
@@ -57,29 +57,26 @@ class User(db.Model):  # type: ignore
         cart: The user's shopping cart (one-to-one relationship).
         orders: The orders placed by the user (one-to-many relationship).
     """
-    #id = Column(Integer, primary_key=True)
-    #username = Column(String(80), unique=True, nullabe=False)
-    #email = Column(String(120), unique=True, nullabe=False)
-    #password_hash = Column(String(128), nullable=False)
-    #is_admin = Column(Boolean, default=False)
-    #cart = relationship("Cart", back_populates="user", uselist=False)
-    #orders = relationship("Order", back_populates="user")
+
+    # id = Column(Integer, primary_key=True)
+    # username = Column(String(80), unique=True, nullabe=False)
+    # email = Column(String(120), unique=True, nullabe=False)
+    # password_hash = Column(String(128), nullable=False)
+    # is_admin = Column(Boolean, default=False)
+    # cart = relationship("Cart", back_populates="user", uselist=False)
+    # orders = relationship("Order", back_populates="user")
     # --
     # based on https://docs.sqlalchemy.org/en/20/orm/declarative_tables.html
     __tablename__ = "user"
     id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(
-        String(80), unique=True, nullable=False)
-    email: Mapped[str] = mapped_column(
-        String(120), unique=True, nullable=False)
+    username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(128), nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     cart: Mapped[Optional["Cart"]] = relationship(
         "Cart", back_populates="user", uselist=False
     )
-    orders: Mapped[List["Order"]] = relationship(
-        "Order", back_populates="user")
-
+    orders: Mapped[List["Order"]] = relationship("Order", back_populates="user")
 
     def set_password(self, password: str) -> None:
         """
@@ -102,7 +99,7 @@ class User(db.Model):  # type: ignore
         """
         # Checks if pwhash is valid before checking for the password
         if self.password_hash is None:
-            return False # Returns false if the password has is not defined
+            return False  # Returns false if the password has is not defined
         # Verification is useful to prevent errors in cases where a user does not
         # have a defined password hash or in incorrect object initialization scenarios.
         return check_password_hash(self.password_hash, password)
@@ -143,8 +140,7 @@ class Cart(db.Model):  # type: ignore
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     user: Mapped["User"] = relationship("User", back_populates="cart")
-    items: Mapped[List["CartItem"]] = relationship(
-        "CartItem", back_populates="cart")
+    items: Mapped[List["CartItem"]] = relationship("CartItem", back_populates="cart")
 
 
 class CartItem(db.Model):  # type: ignore
@@ -163,8 +159,7 @@ class CartItem(db.Model):  # type: ignore
     __tablename__ = "cart_item"
     id: Mapped[int] = mapped_column(primary_key=True)
     cart_id: Mapped[int] = mapped_column(ForeignKey("cart.id"), nullable=False)
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("product.id"), nullable=False)
+    product_id: Mapped[int] = mapped_column(ForeignKey("product.id"), nullable=False)
     quantity: Mapped[int] = mapped_column(default=1)
     cart: Mapped["Cart"] = relationship("Cart", back_populates="items")
     product: Mapped["Product"] = relationship("Product")
@@ -187,10 +182,11 @@ class Order(db.Model):  # type: ignore
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     total: Mapped[float] = mapped_column(Float, nullable=False)
-    #date: Mapped[datetime] = mapped_column(
-        #default=datetime.utcnow, nullable=False)
+    # date: Mapped[datetime] = mapped_column(
+    # default=datetime.utcnow, nullable=False)
     date: Mapped[datetime] = mapped_column(
-        default=datetime.now(timezone.utc), nullable=False)
+        default=datetime.now(timezone.utc), nullable=False
+    )
     user: Mapped["User"] = relationship("User", back_populates="orders")
     order_items: Mapped[List["OrderItem"]] = relationship(
         "OrderItem", back_populates="order"
@@ -213,12 +209,9 @@ class OrderItem(db.Model):  # type: ignore
 
     __tablename__ = "order_item"
     id: Mapped[int] = mapped_column(primary_key=True)
-    order_id: Mapped[int] = mapped_column(
-        ForeignKey("order.id"), nullable=False)
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("product.id"), nullable=False)
+    order_id: Mapped[int] = mapped_column(ForeignKey("order.id"), nullable=False)
+    product_id: Mapped[int] = mapped_column(ForeignKey("product.id"), nullable=False)
     quantity: Mapped[int] = mapped_column(default=1)
     price: Mapped[float] = mapped_column(Float, nullable=False)
-    order: Mapped["Order"] = relationship(
-        "Order", back_populates="order_items")
+    order: Mapped["Order"] = relationship("Order", back_populates="order_items")
     product: Mapped["Product"] = relationship("Product")

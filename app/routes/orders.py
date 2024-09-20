@@ -78,8 +78,7 @@ def place_order():
     CartItem.query.filter_by(cart_id=cart.id).delete()
     db.session.commit()
 
-    return jsonify({"msg": "Order placed successfully",
-                   "order_id": order.id}), 201
+    return jsonify({"msg": "Order placed successfully", "order_id": order.id}), 201
 
 
 @orders_bp.route("/history", methods=["GET"])
@@ -95,9 +94,9 @@ def get_order_history():
         JSON response containing the user's order list.
     """
     user = User.query.get(get_jwt_identity())
-    #orders = Order.query.filter_by(
-        #user_id=user.id).order_by(
-        #Order.id.desc()).all()
+    # orders = Order.query.filter_by(
+    # user_id=user.id).order_by(
+    # Order.id.desc()).all()
     # The desc() method must be explicitly from sqlalchemy module to work correctly.
     orders = Order.query.filter_by(user_id=user.id).order_by(desc(Order.id)).all()
 
