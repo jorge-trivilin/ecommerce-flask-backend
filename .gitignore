@@ -4,6 +4,8 @@ app/__pycache__/models.cpython-312.pyc
 __pycache__/
 *.pyc
 __pycache__
+app/__pycache__/routes
+tests/__pycache__
 
 # Pytest stuff
 .pytest_cache/
@@ -19,3 +21,5 @@ __pycache__
 
 # temp
 documentation.md
+
+images/
