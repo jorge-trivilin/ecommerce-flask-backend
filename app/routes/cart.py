@@ -135,7 +135,10 @@ def add_to_cart():
     product_id = data["product_id"]
     quantity = data.get("quantity", 1)  # Default to 1 if not provided
     # Delegating cart logic to the cart_service
-    cart_service.add_item(user_id=user_id, product_id=product_id, quantity=quantity)
+    cart_service.add_item(
+        user_id=user_id,
+        product_id=product_id,
+        quantity=quantity)
     return jsonify({"msg": "Product added to cart"}), 200
 
 
