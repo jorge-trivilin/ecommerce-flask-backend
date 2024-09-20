@@ -282,8 +282,10 @@ def test_clear_cart(client, auth_headers, sample_product):
     """
     Test clearing the cart.
 
-    This test ensures that the entire cart is cleared when calling the clear_cart endpoint.
-    It first adds a product to the cart, then calls the clear endpoint and verifies that the cart is empty.
+    This test ensures that the entire cart is cleared 
+    when calling the clear_cart endpoint.
+    It first adds a product to the cart, then calls the clear 
+    endpoint and verifies that the cart is empty.
     """
     # Add a product to the cart
     client.post(
