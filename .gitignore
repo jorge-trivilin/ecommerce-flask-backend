@@ -21,8 +21,6 @@ tests/__pycache__
 # Obsidian
 .obsidian
 
-images/
-
 # Python cache files
 __pycache__/
 *.py[cod]
