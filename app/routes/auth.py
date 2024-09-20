@@ -1,5 +1,5 @@
 """
-auth.py: 
+auth.py:
 
 Authentication Blueprint for E-commerce Backend
 

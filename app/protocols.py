@@ -1,7 +1,7 @@
 """
 protocols.py: Cart Management Protocols and Implementations
 
-This module defines protocols and concrete implementations for 
+This module defines protocols and concrete implementations for
 handling cart items and cart services.
 
 Protocols:
