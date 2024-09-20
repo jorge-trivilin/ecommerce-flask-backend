@@ -1,38 +1,25 @@
-# products.py
 """
-auth.py
+products.py
 
-This module handles user authentication for the e-commerce platform using Flask.
-It provides endpoints for user registration and login, allowing users to create
-accounts and access the system securely. The module ensures that usernames and
-emails are unique, and that passwords are stored securely.
+This module handles product management for the e-commerce platform using Flask.
+It provides endpoints for listing, retrieving, adding, editing, and deleting products.
+The module includes admin-only operations for product management.
 
 Endpoints:
-- POST /register: Allows a new user to register by providing a username, email,
-  and password. It checks for the uniqueness of the username and email before
-  creating an account.
-
-- POST /login: Allows an existing user to log in by providing their username
-  and password. If the credentials are valid, an access token is generated
-  and returned.
+- GET /products: Retrieves a list of all products.
+- GET /products/<id>: Retrieves details of a specific product.
+- POST /products: Adds a new product (Admin only).
+- PUT /products/<id>: Updates an existing product (Admin only).
+- DELETE /products/<id>: Deletes a product (Admin only).
 
 Functions:
 - admin_required(fn): A decorator that checks if the current user has admin
   privileges before allowing access to certain endpoints.
-
-- get_products(): Retrieves a list of all products in the database.
-
-- get_product(product_id): Retrieves detailed information about a specific product
-  identified by its product ID.
-
-- add_product(): Allows an admin user to add a new product to the database,
-  requiring name and price as mandatory fields.
-
-- edit_product(product_id): Allows an admin user to update the details of an
-  existing product identified by its product ID.
-
-- delete_product(product_id): Allows an admin user to delete a product from
-  the database identified by its product ID.
+- get_products(): Retrieves a list of all products.
+- get_product(product_id): Retrieves details of a specific product.
+- add_product(): Allows an admin to add a new product.
+- edit_product(product_id): Allows an admin to update an existing product.
+- delete_product(product_id): Allows an admin to delete a product.
 
 Error Handling:
 The module includes error handling for various scenarios such as:
@@ -44,7 +31,6 @@ Dependencies:
 - Flask: Web framework used for building the API.
 - Flask-JWT-Extended: Library used for handling JSON Web Tokens (JWT) for authentication.
 - SQLAlchemy: ORM used for database interactions.
-
 """
 
 from functools import wraps

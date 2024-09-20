@@ -1,5 +1,7 @@
 """
-auth.py: Authentication Blueprint for E-commerce Backend
+auth.py: 
+
+Authentication Blueprint for E-commerce Backend
 
 This module defines the authentication routes for user registration and login.
 It uses Flask-JWT-Extended for token-based authentication.
@@ -12,12 +14,21 @@ Functions:
     register(): Handle user registration
     login(): Handle user login and token generation
 
+Dependencies:
+    Flask: Web framework for building the API
+    Flask-JWT-Extended: Handles JWT token generation and management
+    SQLAlchemy: ORM for database interactions (via app.models)
+
+Models:
+    User: Represents the user entity in the database
+
 Usage:
     This blueprint should be registered with the main Flask application.
     It interacts with the User model to create new users and verify credentials.
 
 Note:
     Ensure that Flask-JWT-Extended is properly configured in the main application.
+    Passwords are hashed before storing in the database for security.
 """
 
 from flask import Blueprint, request, jsonify

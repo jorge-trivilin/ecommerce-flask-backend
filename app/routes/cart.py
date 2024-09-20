@@ -1,5 +1,40 @@
 """
-Routes for handling cart-related operations.
+cart.py
+
+This module handles cart-related operations for the e-commerce platform using Flask.
+It provides endpoints for viewing, adding items to, and removing items from a user's shopping cart.
+
+Endpoints:
+- GET /cart: Retrieve the current user's cart contents.
+- POST /cart: Add a product to the user's cart.
+- DELETE /cart/<product_id>: Remove a specific product from the user's cart.
+
+Functions:
+- view_cart(): Retrieves and returns the contents of the current user's cart.
+- add_to_cart(): Adds a product to the user's cart or updates its quantity if already present.
+- remove_from_cart(product_id): Removes a specific product from the user's cart.
+
+Authentication:
+All endpoints in this module require JWT authentication.
+
+Error Handling:
+The module includes error handling for scenarios such as:
+- Attempting to access a non-existent cart.
+- Trying to remove an item that's not in the cart.
+
+Dependencies:
+- Flask: Web framework used for building the API.
+- Flask-JWT-Extended: Library used for handling JSON Web Tokens (JWT) for authentication.
+- SQLAlchemy: ORM used for database interactions via the app.models module.
+
+Models Used:
+- User: To retrieve the current user.
+- Cart: To manage the user's shopping cart.
+- CartItem: To handle individual items in the cart.
+- Product: To reference products added to the cart.
+
+Note:
+This module assumes that a user can have only one active cart at a time.
 """
 
 from flask import Blueprint, jsonify, request

@@ -34,6 +34,7 @@ Example:
 
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy import desc
 from app.models import db, User, CartItem, Order, OrderItem
 
 orders_bp = Blueprint("orders", __name__, url_prefix="/orders")
@@ -94,9 +95,11 @@ def get_order_history():
         JSON response containing the user's order list.
     """
     user = User.query.get(get_jwt_identity())
-    orders = Order.query.filter_by(
-        user_id=user.id).order_by(
-        Order.id.desc()).all()
+    #orders = Order.query.filter_by(
+        #user_id=user.id).order_by(
+        #Order.id.desc()).all()
+    # The desc() method must be explicitly from sqlalchemy module to work correctly.
+    orders = Order.query.filter_by(user_id=user.id).order_by(desc(Order.id)).all()
 
     order_history = [
         {
@@ -115,16 +118,16 @@ def get_order_history():
 @jwt_required()
 def get_order_details(order_id):
     """
-    Recupera os detalhes de um pedido específico.
+    Retrieves the details of a specific order.
 
-    Este endpoint retorna informações detalhadas sobre um pedido,
-    incluindo todos os itens do pedido.
+    This endpoint returns detailed information about an order,
+    including all order items.
 
     Args:
-        order_id (int): O ID do pedido a ser visualizado.
+        order_id (int): The ID of the order to be viewed.
 
     Returns:
-        JSON response com os detalhes do pedido.
+        JSON response with order details.
     """
     user = User.query.get(get_jwt_identity())
     order = Order.query.filter_by(id=order_id, user_id=user.id).first()

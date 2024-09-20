@@ -1,313 +1,215 @@
-# ecommerce-flask-backend
+# E-commerce Flask Backend
 
-## Assignment
+## Project Description
 
-**Problem Statement:**  
-Create a backend system for a simple e-commerce platform where users can register, view a list of products, add products to a cart, and place an order. You should also implement basic user authentication and ensure that users can only view and manipulate their own data.
+This project is a backend system for a simple e-commerce platform built with Flask. It provides RESTful API endpoints for user management, product management, shopping cart functionality, and order processing. The system includes user authentication, role-based access control, and data persistence using SQLite.
 
-**Requirements:**
+## Features
 
-- **User Management:**
-  - The persona for Users should be able to register, log in, and manage their account.
-  - Passwords should be securely stored (e.g., hashed).
+- User Management:
+  - User registration and login
+  - Secure password hashing
+  - JWT-based authentication
+- Product Management:
+  - CRUD operations for products (Admin only)
+  - Product listing and details viewing (All users)
+- Shopping Cart:
+  - Add products to cart
+  - View cart contents
+  - Remove items from cart
+- Order Processing:
+  - Place orders
+  - View order history
+  - Retrieve order details
+- Admin Functionality:
+  - Manage products (Add, Edit, Delete)
+- Data Persistence:
+  - SQLite database for storing users, products, carts, and orders
+- Error Handling:
+  - Comprehensive error handling for invalid inputs, unauthorized access, etc.
+- Testing:
+  - Unit tests for critical functions
 
-- **Product Management:**
-  - The persona for Admins should be able to add, edit, and remove products.
-  - Regular users should be able to view a list of products and details of each product.
+## Technology Stack
 
-- **Cart and Order Management:**
-  - Users should be able to add products to a cart.
-  - Users should be able to view their cart and place an order.
-  - Once an order is placed, the cart should be cleared, and the order details should be saved.
-
-- **Data Persistence:**
-  - Store user, product, cart, and order data in a file-based database (e.g., JSON, SQLite).
-
-- **Testing:**
-  - Write basic unit tests for persona critical functions like user registration, product addition, and order placement.
-
-- **Error Handling:**
-  - Handle common errors such as invalid inputs, unauthorized access, and unavailable products.
-
-- **Version Control:**
-  - Use Git to manage your project. Make regular commits and document your work in a README file.
-
-**Tested Competencies:**
-
-- **Problem-Solving Skills:**
-  - The challenge requires designing and implementing a solution that involves multiple components (users, products, orders), testing the candidate’s ability to break down complex problems using Software Engineering best practices.
-
-- **Programming Fundamentals:**
-  - The candidate will need to use object-oriented design, design patterns, basic data structures (e.g., lists, dictionaries), control flow, and functions to manage the application’s logic.
-
-- **Code Quality:**
-  - The candidate’s ability to write clean, readable code is tested by the need to organize different components of the application, adhere to DRY (Don't Repeat Yourself) principles, and provide comments where necessary indicating input parameters, return, and ensuring function signatures contain variable annotations.
-
-- **Testing and Debugging:**
-  - Writing unit tests for key functions assesses testing skills, while debugging the implementation is necessary to ensure the application works as expected. TDD is validated and preferred by reviewing the commit history.
-
-- **Language Proficiency:**
-  - Demonstration of Python proficiency by implementing the application with correct syntax, using appropriate libraries, and following best practices (e.g., comments, variable annotations, list comprehensions, etc.).
-
-- **Version Control:**
-  - Use of Git can be assessed by reviewing the solution’s commit history indicating branch management and overall use of basic version control.
-
-- **Communication Skills:**
-  - Explaining the solution approach in the well-formatted README.md documents their implementation and should describe any assumptions made. (Often problems are not well-formed and require a bit of decision-making. Use this as an opportunity to show how well you identify missing or incomplete information and press forward with a solution that is under test.)
-
-- **Adaptability and Learning:**
-  - If unfamiliar with certain aspects (like user authentication or writing tests), use the README.md to identify areas you had to look up to learn on the fly as a demonstration of the ability to adapt.
-
-**Challenge Instructions:**
-
-- Anticipated Time Required: Less than 4 hours
-- Tools Required: Python, the IDE of your choosing, internet access, and git.
-
-**Deliverables:**
-
-1. The codebase in a compressed file containing the entire git repository.  
-   § NOTE: Be sure to include the .git file for inspection of commits.
-   
-2. A README.md file containing at a minimum a general project description, how to set up and run the application, how to test the application, any assumptions made, and any learnings you had to do to design and/or implement the solution.
-   
-3. A description of the approach taken and any trade-offs or decisions made during implementation.  
-   § NOTE: Consider discussing the use of Object-Oriented design, leveraging Python Protocols over inheritance (recommended), Design Patterns (see here for an overview of design patterns), and anything you believe would be a good callout for this challenge illustrating your programming, systems thinking, and general expertise.
-
-**Rubric:**  
-Your code submission will be assessed based on the quality of the solution in addressing the 8 competencies identified above in the “Tested Competencies” section.
-
----
+- Python 3.8+
+- Flask
+- Flask-SQLAlchemy
+- Flask-JWT-Extended
+- SQLite
+- pytest (for testing)
 
 ## Project Structure
 
-```plaintext
-ecommerce-backend/
+```
+ecommerce-flask-backend/
+│
+├── .github/
+│   └── workflows/
+│       ├── Build, Test, Lint & Format.yml
+│       └── Lint.yml
+│
 ├── app/
-│   ├── __init__.py
-│   ├── models.py
 │   ├── routes/
-│   │   ├── __init__.py
-│   │   ├── auth.py
-│   │   ├── products.py
-│   │   ├── cart.py
-│   │   └── orders.py
-│   ├── schemas.py
-│   └── utils.py
-├── tests/
-│   ├── test_auth.py
-│   ├── test_products.py
-│   ├── test_cart.py
-│   └── test_orders.py
+│   ├── __init__.py
+│   ├── error_handlers.py
+│   ├── extensions.py
+│   └── models.py
+│
 ├── migrations/
+│   ├── versions/
+│   ├── README
+│   ├── alembic.ini
+│   ├── env.py
+│   └── script.py.mako
+│
+├── tests/
+│   ├── __init__.py
+│   ├── test_auth.py
+│   ├── test_carts.py
+│   ├── test_orders.py
+│   └── test_products.py
+│
+├── .env
 ├── .gitignore
-├── requirements.txt
+├── .pylintrc
+├── README.md
+├── app.db
+├── buildspec.yml
 ├── config.py
+├── dev-requirements.txt
+├── Dockerfile
+├── Makefile
+├── pyproject.toml
+├── requirements.txt
+├── run_build.sh
 ├── run.py
-└── README.md
+└── seed_data.py
+```
+## Key Files and Directories
+
+- `.github/workflows/`: Contains CI/CD configuration for GitHub Actions.
+- `app/`: Main application package.
+  - `routes/`: Contains route definitions for different parts of the application.
+  - `error_handlers.py`: Defines error handling mechanisms.
+  - `extensions.py`: Initializes Flask extensions.
+  - `models.py`: Defines database models.
+- `migrations/`: Contains database migration files managed by Alembic.
+- `tests/`: Contains all unit tests for the application.
+- `.env`: Environment variables file (not tracked by git).
+- `.gitignore`: Specifies intentionally untracked files to ignore.
+- `.pylintrc`: Configuration file for Pylint.
+- `README.md`: Project documentation and overview.
+- `app.db`: SQLite database file.
+- `buildspec.yml`: Build specification for CI/CD in AWS CodeBuild 
+- `config.py`: Configuration settings for the application.
+- `dev-requirements.txt`: Development dependencies.
+- `Dockerfile`: Instructions for building a Docker image of the application.
+- `Makefile`: Contains commands for common operations.
+- `pyproject.toml`: Configuration file for Python tools like Black and Ruff.
+- `requirements.txt`: Production dependencies.
+- `run_build.sh`: Script to run the build process.
+- `run.py`: Script to run the application.
+- `seed_data.py`: Script to populate the database with initial data.
+
+## Setup and Installation
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/e-commerce-backend.git
+   cd e-commerce-backend
+   ```
+
+2. Create and activate a virtual environment:
+   ```
+   python -m venv venv
+   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+   ```
+
+3. Install the required packages:
+   ```
+   pip install -r requirements.txt
+   ```
+
+4. Set up environment variables:
+   Create a `.env` file in the root directory and add the following:
+   ```
+   FLASK_APP=app
+   FLASK_ENV=development
+   SECRET_KEY=your_secret_key_here
+   JWT_SECRET_KEY=your_jwt_secret_key_here
+   ```
+
+5. Initialize the database:
+   ```
+   flask db init
+   flask db migrate
+   flask db upgrade
+   ```
+
+## Running the Application
+
+To run the application in development mode:
+
+```
+flask run
 ```
 
-## Stack
+The API will be available at `http://localhost:5000`.
 
-- Language: Python
-- Web Framework: Flask
-- Database: SQLite
-- Auth:
-- ORM: SQLAlchemy
-- Testing: pytest
-- Version control: Github
+## API Endpoints
 
-## Files
+### Authentication
+- `POST /api/auth/register`: Register a new user
+- `POST /api/auth/login`: Login and receive access token
 
-### app/models.py
+### Products
+- `GET /api/products`: List all products
+- `GET /api/products/<id>`: Get product details
+- `POST /api/products`: Add a new product (Admin only)
+- `PUT /api/products/<id>`: Update a product (Admin only)
+- `DELETE /api/products/<id>`: Delete a product (Admin only)
 
-This file defines the database schema for a simple e-commerce backend using SQLAlchemy, an Object-Relational Mapping (ORM) library for Python. Let's break down each model and its components:
+### Cart
+- `GET /api/cart`: View cart contents
+- `POST /api/cart`: Add item to cart
+- `DELETE /api/cart/<product_id>`: Remove item from cart
 
-1. **User Model:**
-   - Represents registered users of the e-commerce platform.
-   - Fields:
-     - id: Unique identifier for each user
-     - username: User's chosen username (unique)
-     - email: User's email address (unique)
-     - password_hash: Hashed version of the user's password for security
-     - is_admin: Boolean flag to identify admin users
-   - Relationships:
-     - cart: One-to-one relationship with the Cart model
-     - orders: One-to-many relationship with the Order model
-   - Methods:
-     - set_password: Hashes and sets the user's password
-     - check_password: Verifies a given password against the stored hash
+### Orders
+- `POST /api/orders`: Place an order
+- `GET /api/orders/history`: View order history
+- `GET /api/orders/<order_id>`: Get order details
 
-2. **Product Model:** 
-   - Represents products available in the e-commerce platform.
-   - Fields:
-     - id: Unique identifier for each product 
-     - name: Name of the product 
-     - description: Detailed description of the product 
-     - price: Price of the product 
-     - stock: Current stock quantity of the product 
+## Testing
 
-3. **Cart Model:** 
-   - Represents a user's shopping cart.
-   - Fields:
-     - id: Unique identifier for each cart 
-     - user_id: Foreign key linking to the User model 
-   - Relationships:
-     - items: One-to-many relationship with the CartItem model 
+To run the test suite:
 
-4. **CartItem Model:** 
-   - Represents individual items in a user's cart.
-   - Fields:
-     - id: Unique identifier for each cart item 
-     - cart_id: Foreign key linking to the Cart model 
-     - product_id: Foreign key linking to the Product model 
-     - quantity: Quantity of the product in the cart 
-   - Relationships:
-     - product: Many-to-one relationship with the Product model 
-
-5. **Order Model:** 
-   - Represents a completed order.
-   - Fields:
-     - id: Unique identifier for each order 
-     - user_id: Foreign key linking to the User model 
-     - total: Total price of the order 
-   - Relationships:
-     - order_items: One-to-many relationship with the OrderItem model 
-
-6. **OrderItem Model:** 
-   - Represents individual items in a completed order.
-   - Fields:
-     - id: Unique identifier for each order item 
-     - order_id: Foreign key linking to the Order model 
-     - product_id: Foreign key linking to the Product model 
-     - quantity: Quantity of the product in the order 
-     - price: Price of the product at the time of order (in case product prices change later) 
-   - Relationships:
-     - product: Many-to-one relationship with the Product model 
-
-This schema allows for:
-
-- User registration and authentication
-- Product management
-- Shopping cart functionality
-- Order placement and history
-
-The relationships between these models enable efficient querying and data management. For example, we can easily retrieve all items in a user's cart or all orders placed by a user.
-
-### app/routes/auth.py
-
-This file handles user authentication for the e-commerce platform. It provides endpoints for user registration and login, allowing users to create accounts and access the system securely. The module ensures that usernames and emails are unique and that passwords are stored securely.
-
-**Endpoints**
-
-1. **User Registration**
-
-    * **Endpoint**: `/register`
-    * **Method**: `POST`
-    * **Description**:
-      Allows a new user to register by providing a username, email, and password. The system checks for uniqueness before creating an account.
-
-    * Request
-
-      * **Content-Type**:`application/json`
-      * **Body Parameters**:
-        * `username` (string): The desired username for new user.
-        * `email` (string): The email address of new user.
-        * `password` (string): The password for new user account.
-
-    * Example Request
-
-      ```http
-      POST /register HTTP/1.1
-      Content-Type: application/json
-      
-      {
-          "username": "john_doe",
-          "email": "john@example.com",
-          "password": "securepassword123"
-      }
-      ```
-
-    * Responses
-
-      * **201 Created**:
-        User registered successfully.
-        ```json
-        {
-            "msg": "User registered successfully"
-        }
-        ```
-
-      * **400 Bad Request**:
-        Username or email already exists.
-        ```json
-        {
-            "msg": "Username already exists"
-        }
-        ```
-        or 
-        ```json
-        {
-            "msg": "Email already exists"
-        }
-        ```
-
----
-
-2. **User Login**
-
-    * **Endpoint**:`/login`
-    * **Method**:`POST`
-    * **Description**:
-      Allows an existing user to log in by providing their username and password. If credentials are valid, an access token is generated.
-
-    * Request
-
-      * **Content-Type**:`application/json`
-      * **Body Parameters**:
-        * `username` (string): The username of user attempting login.
-        * `password` (string): The password for user's account.
-
-    * Example Request
-
-      ```http
-      POST /login HTTP/1.1
-      Content-Type: application/json
-      
-      {
-          "username": "john_doe",
-          "password": "securepassword123"
-      }
-      ```
-
-    * Responses
-
-      * **200 OK**:
-        Access token generated successfully.
-        ```json
-        {
-            "access_token": "<JWT_TOKEN>"
-        }
-        ```
-
-      * **401 Unauthorized**:
-        Invalid credentials provided.
-        ```json
-        {
-            "msg": "Invalid credentials"
-        }
-        ```
-
-## Error Handling
-
-The module handles common errors related to user authentication:
-
-- **Username already exists**:
-  Returned when attempting to register with an existing username.
-
-- **Email already exists**:
-  Returned when attempting to register with an existing email.
-
-- **Invalid credentials**:
-  Returned when attempting login with incorrect username or password.
+```
+pytest
 ```
 
+## Design Decisions and Trade-offs
+
+1. **Authentication**: Used JWT for authentication due to its stateless nature and scalability. The trade-off is that it need to handle token expiration and refreshing.
+
+2. **Database**: SQLite was chosen for its simplicity and ease of setup, making the project easy to run without additional dependencies. For a production environment, a more robust database like PostgreSQL would be recommended.
+
+3. **API Design**: Followed RESTful principles for API design, ensuring clear and consistent endpoints. This makes the API intuitive but may require more endpoints compared to a GraphQL approach.
+
+4. **Error Handling**: A centralized error handling mechanism was implemented to ensure consistent error responses across the application.
+
+5. **Testing**: Focused on unit tests for critical paths. In a larger project, integration tests and end-to-end tests would also be beneficial.
+
+6. **Code Structure**: The project follows a modular structure with blueprints, making it easy to extend and maintain. This structure adds some complexity but improves long-term maintainability.
+
+## Possible Improvements
+
+- Implement user roles and permissions for finer-grained access control
+- Add product categories and search functionality
+- Implement inventory management
+- Add payment integration
+- Enhance test coverage with integration and end-to-end tests
+
+## License
+
+This project is licensed under the MIT License.
