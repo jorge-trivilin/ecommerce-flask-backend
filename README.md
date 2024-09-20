@@ -32,7 +32,7 @@ This project is a backend system for a simple e-commerce platform built with Fla
 
 ## Technology Stack
 
-- Python 3.8+
+- Python 3.12
 - Flask
 - Flask-SQLAlchemy
 - Flask-JWT-Extended
@@ -70,7 +70,6 @@ ecommerce-flask-backend/
 │   ├── test_orders.py
 │   └── test_products.py
 │
-├── .env
 ├── .gitignore
 ├── .pylintrc
 ├── README.md

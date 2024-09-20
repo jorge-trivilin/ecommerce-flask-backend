@@ -17,7 +17,7 @@ install-prod:
 install-dev:
 	$(PIP) install -r dev-requirements.txt
 
-# Run linting
+# Run linting4
 lint:
 	$(PYLINT) app tests
 
@@ -28,8 +28,8 @@ test:
 # Format code
 format:
 	find app tests -name '*.py' -exec $(AUTOPEP8) --in-place --aggressive --aggressive {} +
-	git config --global user.email "jorge.trivilin@gmail.com"
-	git config --global user.name "Jorge Trivilin"
+	git config user.email "jorge.trivilin@gmail.com"
+	git config user.name "Jorge Trivilin"
 	git diff --exit-code || (git add . && git commit -m "Auto-format code" && echo "Changes committed")
 
 # Clean generated files
