@@ -28,6 +28,7 @@ Dependencies:
 Usage:
 - Run with `pytest` to verify cart functionality.
 """
+# ruff: noqa: F841
 # pylint: disable=unused-argument
 # pylint: disable=duplicate-code
 import logging
@@ -216,12 +217,9 @@ def test_remove_from_cart(client, auth_headers, sample_product):
     )
 
     # Removing product from cart
-    response = client.delete(
-        f"/cart/{sample_product.id}",
-        headers=auth_headers)
+    response = client.delete(f"/cart/{sample_product.id}", headers=auth_headers)
     assert response.status_code == 200
-    assert json.loads(response.data)[
-        "msg"] == "Item successfully removed from cart"
+    assert json.loads(response.data)["msg"] == "Item successfully removed from cart"
 
     # Check if cart is empty
     response = client.get("/cart", headers=auth_headers)
