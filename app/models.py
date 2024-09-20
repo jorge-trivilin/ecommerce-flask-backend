@@ -38,7 +38,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 from sqlalchemy import String, Boolean, Text, Float, ForeignKey
-from sqlalchemy.orm import Mapped, relationship, mapped_column # type: ignore
+from sqlalchemy.orm import Mapped, relationship, mapped_column  # type: ignore
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.extensions import db
@@ -57,13 +57,14 @@ class User(db.Model):  # type: ignore
         cart: The user's shopping cart (one-to-one relationship).
         orders: The orders placed by the user (one-to-many relationship).
     """
-    #id = Column(Integer, primary_key=True)
-    #username = Column(String(80), unique=True, nullabe=False)
-    #email = Column(String(120), unique=True, nullabe=False)
-    #password_hash = Column(String(128), nullable=False)
-    #is_admin = Column(Boolean, default=False)
-    #cart = relationship("Cart", back_populates="user", uselist=False)
-    #orders = relationship("Order", back_populates="user")
+
+    # id = Column(Integer, primary_key=True)
+    # username = Column(String(80), unique=True, nullabe=False)
+    # email = Column(String(120), unique=True, nullabe=False)
+    # password_hash = Column(String(128), nullable=False)
+    # is_admin = Column(Boolean, default=False)
+    # cart = relationship("Cart", back_populates="user", uselist=False)
+    # orders = relationship("Order", back_populates="user")
     # --
     # based on https://docs.sqlalchemy.org/en/20/orm/declarative_tables.html
     __tablename__ = "user"
@@ -79,7 +80,6 @@ class User(db.Model):  # type: ignore
     )
     orders: Mapped[List["Order"]] = relationship(
         "Order", back_populates="user")
-
 
     def set_password(self, password: str) -> None:
         """
@@ -102,9 +102,10 @@ class User(db.Model):  # type: ignore
         """
         # Checks if pwhash is valid before checking for the password
         if self.password_hash is None:
-            return False # Returns false if the password has is not defined
+            return False  # Returns false if the password has is not defined
         # Verification is useful to prevent errors in cases where a user does not
-        # have a defined password hash or in incorrect object initialization scenarios.
+        # have a defined password hash or in incorrect object initialization
+        # scenarios.
         return check_password_hash(self.password_hash, password)
 
 
@@ -187,10 +188,11 @@ class Order(db.Model):  # type: ignore
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     total: Mapped[float] = mapped_column(Float, nullable=False)
-    #date: Mapped[datetime] = mapped_column(
-        #default=datetime.utcnow, nullable=False)
+    # date: Mapped[datetime] = mapped_column(
+    # default=datetime.utcnow, nullable=False)
     date: Mapped[datetime] = mapped_column(
-        default=datetime.now(timezone.utc), nullable=False)
+        default=datetime.now(timezone.utc), nullable=False
+    )
     user: Mapped["User"] = relationship("User", back_populates="orders")
     order_items: Mapped[List["OrderItem"]] = relationship(
         "OrderItem", back_populates="order"
