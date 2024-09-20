@@ -4,6 +4,14 @@
 
 This project is a backend system for a simple e-commerce platform built with Flask. It provides RESTful API endpoints for user management, product management, shopping cart functionality, and order processing. The system includes user authentication, role-based access control, and data persistence using SQLite.
 
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+
+*Jorge Trivilin.* 
+
+## Video
+
+[![Thumbnail do Vídeo](https://img.youtube.com/vi/UPkdGN9MUZg/0.jpg)](https://www.youtube.com/watch?v=UPkdGN9MUZg)
+
 ## Features
 
 - User Management:
